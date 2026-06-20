@@ -1,15 +1,14 @@
 import tester.*;
 
 /*
-                   +--------------+    +--------------+  
-                   | Customer     |    | Date         |  
-                   +--------------+    +--------------+  
-                   | String name  |    | String month |  
-                   | int id       |    | int day      |  
-                   |              |    | int year     |
-                   +--------------+    +--------------+ 
-                          |                     |
-                          -----------------------
+                             +--------------+      
+                             | Customer     |      
+                             +--------------+      
+                             | String name  |      
+                             | int id       |     
+                             +--------------+     
+                                    |                     
+                             ----------------
                                     |
                              +--------------+                
                              | IBankAccount |                
@@ -20,13 +19,21 @@ import tester.*;
                                    ---                    
                                     |                     
           ---------------------------------------------------           
-          |                         |                       |           
+          |                         |                       |  
+          |                         |                +--------------+ 
+          |                         |                | Date         | 
+          |                         |                +--------------+  
+          |                         |                | String month |  
+          |                         |                | int day      | 
+          |                         |                | int year     | 
+          |                         |                +--------------+
+          V                         V                         | 
 +-------------------+    +-------------------+    +--------------------+
 | Checking          |    | Savings           |    |  CD                |
 +-------------------+    +-------------------+    +--------------------+
 | Customer customer |    | Customer customer |    | Customer customer  |
-| int balance       |    | int balance       |    | int balance        |
-| int minBalance    |    | double interest   |    | double interest    |
+| double balance    |    | double balance    |    | double balance     |
+| double minBalance |    | double interest   |    | double interest    |
 |                   |    |                   |    | Date maturityDate  |
 +-------------------+    +-------------------+    +--------------------+  
 */
@@ -43,31 +50,17 @@ class Customer {
   }
 }
 
-// to represent Date class
-class Date {
-  String month;
-  int day;
-  int year;
-  
-  // the constructor
-  Date(String month, int day, int year) {
-    this.month = month;
-    this.day = day;
-    this.year = year;
-  }
-}
-
 // to represent BankAccount interface
 interface IBankAccount { }
 
 // to represent Checking account class
 class Checking implements IBankAccount {
   Customer customer;
-  int balance;
-  int minimumBalance;
+  double balance;
+  double minimumBalance;
   
   // the constructor 
-  Checking(Customer customer, int balance, int minimumBalance) {
+  Checking(Customer customer, double balance, double minimumBalance) {
     this.customer = customer;
     this.balance = balance;
     this.minimumBalance = minimumBalance;
@@ -77,29 +70,43 @@ class Checking implements IBankAccount {
 // to represent Savings account class
 class Savings implements IBankAccount {
   Customer customer;
-  int balance;
-  double interest;
+  double balance;
+  double interestRate;
   
   // the constructor
-  Savings(Customer customer, int balance, double interest) {
+  Savings(Customer customer, double balance, double interestRate) {
     this.customer = customer;
     this.balance = balance;
-    this.interest = interest;
+    this.interestRate = interestRate;
   }
+}
+
+//to represent Date class
+class Date {
+String month;
+int day;
+int year;
+
+// the constructor
+Date(String month, int day, int year) {
+ this.month = month;
+ this.day = day;
+ this.year = year;
+}
 }
 
 // to represent Certificate Deposit account class
 class CD implements IBankAccount {
   Customer customer;
-  int balance;
-  double interest;
+  double balance;
+  double interestRate;
   Date maturityDate;
   
   // the constructor
-  CD(Customer customer, int balance, double interest, Date maturityDate) {
+  CD(Customer customer, double balance, double interestRate, Date maturityDate) {
     this.customer = customer;
     this.balance = balance;
-    this.interest = interest;
+    this.interestRate = interestRate;
     this.maturityDate = maturityDate;
   }
 }
@@ -113,6 +120,6 @@ class ExamplesBankAccount {
   Date maturity1 = new Date("June", 1, 2005);
   
   Checking check1 = new Checking(this.gray, 1250, 500);
-  Savings saving1 = new Savings(this.proulx, 800, 3.5);
-  CD cd1 = new CD(this.flatt, 10123, 4, this.maturity1);
+  Savings saving1 = new Savings(this.proulx, 800, 0.035);
+  CD cd1 = new CD(this.flatt, 10123, 0.04, this.maturity1);
 }
