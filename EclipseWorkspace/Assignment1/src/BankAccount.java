@@ -26,7 +26,7 @@ import tester.*;
 +-------------------+    +-------------------+    +--------------------+
 | Customer customer |    | Customer customer |    | Customer customer  |
 | int balance       |    | int balance       |    | int balance        |
-| int minBalance    |    | boolean interest  |    | boolean interest   |
+| int minBalance    |    | double interest   |    | double interest    |
 |                   |    |                   |    | Date maturityDate  |
 +-------------------+    +-------------------+    +--------------------+  
 */
@@ -78,10 +78,10 @@ class Checking implements IBankAccount {
 class Savings implements IBankAccount {
   Customer customer;
   int balance;
-  boolean interest;
+  double interest;
   
   // the constructor
-  Savings(Customer customer, int balance, boolean interest) {
+  Savings(Customer customer, int balance, double interest) {
     this.customer = customer;
     this.balance = balance;
     this.interest = interest;
@@ -92,11 +92,11 @@ class Savings implements IBankAccount {
 class CD implements IBankAccount {
   Customer customer;
   int balance;
-  boolean interest;
+  double interest;
   Date maturityDate;
   
   // the constructor
-  CD(Customer customer, int balance, boolean interest, Date maturityDate) {
+  CD(Customer customer, int balance, double interest, Date maturityDate) {
     this.customer = customer;
     this.balance = balance;
     this.interest = interest;
@@ -106,5 +106,13 @@ class CD implements IBankAccount {
 
 //examples for the class hierarchy that represents Bank Account
 class ExamplesBankAccount {
+  Customer gray = new Customer("Earl Gray", 1729);
+  Customer flatt = new Customer("Ima Flatt", 4104);
+  Customer proulx = new Customer("Annie Proulx", 2992);
   
+  Date maturity1 = new Date("June", 1, 2005);
+  
+  Checking check1 = new Checking(this.gray, 1250, 500);
+  Savings saving1 = new Savings(this.proulx, 800, 3.5);
+  CD cd1 = new CD(this.flatt, 10123, 4, this.maturity1);
 }
