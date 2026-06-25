@@ -279,6 +279,14 @@ class ExamplesShapes {
     IShape s1 = new Square(new CartPt(50, 50), 30, "red");
     IShape s2 = new Square(new CartPt(50, 50), 50, "red");
     IShape s3 = new Square(new CartPt(20, 40), 10, "green");
+
+    IShape t1 = new Triangle(new CartPt(50, 50), 10, 5, "red");
+    IShape t2 = new Triangle(new CartPt(50, 50), 30, 10, "blue");
+    IShape t3 = new Triangle(new CartPt(25, 75), 30, 10, "green");
+
+    IShape r1 = new Rectangle(new CartPt(50, 50), 20, 10, "red");
+    IShape r2 = new Rectangle(new CartPt(50, 50), 40, 20, "blue");
+    IShape r3 = new Rectangle(new CartPt(50, 50), 50, 80, "yellow");
     
     // test the method distToOrigin in the class CartPt
     boolean testDistToOrigin(Tester t) { 
@@ -364,4 +372,75 @@ class ExamplesShapes {
         t.checkExpect(this.s1.contains(new CartPt(100, 100)), false) && 
         t.checkExpect(this.s2.contains(new CartPt(55, 60)), true);
     }
+
+    // test the method area in the class Triangle 
+    boolean testTriangleArea(Tester t) {
+        return 
+        t.checkInexact(this.t1.area(), 25.0, 0.01);
+    }
+
+    // test the method grow in the class Triangle
+    boolean testTriangleGrow(Tester t) {
+        return
+        t.checkExpect(this.t1.grow(20), new Triangle(new CartPt(50, 50), 30, 25, "red"));
+    }
+
+    // test the method distToOrigin in the class Triangle
+    boolean testTriangleDistToOrigin(Tester t) {
+        return
+        t.checkInexact(this.t1.distToOrigin(), 70.71, 0.01) &&
+        t.checkInexact(this.t3.distToOrigin(), 79.06, 0.01);
+    }
+
+    // test the method biggerThan in the class Triangle 
+    boolean testTriangleBiggerThan(Tester t) {
+        return
+        t.checkExpect(this.t1.biggerThan(this.t2), false) &&
+        t.checkExpect(this.t2.biggerThan(this.t1), true) &&
+        t.checkExpect(this.t2.biggerThan(this.s3), true) &&
+        t.checkExpect(this.t1.biggerThan(this.c1), false);
+    }
+
+    // test the method contains in the class Triangle
+    boolean testTriangleContains(Tester t) {
+        return
+        t.checkExpect(this.t1.contains(new CartPt(100, 100)), false) &&
+        t.checkExpect(this.t1.contains(new CartPt(45, 53)), true);
+    }
+
+    // test the method area in the class Rectangle
+    boolean testRectangleArea(Tester t) {
+        return
+        t.checkInexact(this.r1.area(), 200, 0.01);
+    } 
+
+    // test the method grow in the class Rectangle
+    boolean testRectangleGrow(Tester t) {
+        return
+        t.checkExpect(this.r1.grow(20), new Rectangle(new CartPt(50, 50), 40, 30, "red"));
+    }
+
+    // test the method distToOrigin in the class Rectangle
+    boolean testRectangleDistToOrigin(Tester t) {
+        return
+        t.checkInexact(this.r1.distToOrigin(), 70.71, 0.01) &&
+        t.checkInexact(this.r3.distToOrigin(), 70.71, 0.01);
+    }
+
+    // test the method biggerThan in the class Rectangle 
+    boolean testRectangleBiggerThan(Tester t) {
+        return
+        t.checkExpect(this.r1.biggerThan(this.r2), false) &&
+        t.checkExpect(this.r2.biggerThan(this.r1), true) &&
+        t.checkExpect(this.r1.biggerThan(this.s3), true) &&
+        t.checkExpect(this.r1.biggerThan(this.c2), false);
+    }
+
+    // test the method contains in the class Rectangle
+    boolean testRectangleContains(Tester t) {
+        return
+        t.checkExpect(this.r1.contains(new CartPt(100, 100)), false) &&
+        t.checkExpect(this.r1.contains(new CartPt(60, 55)), true);
+    }
+
 }
