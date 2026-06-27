@@ -12,47 +12,50 @@ import tester.*;
 
 
 /*
- +----------------------------+                    
- | IShape                     |                    
- +----------------------------+                    
- | double area()              |                    
- | double distToOrigin()      |                    
- | IShape grow(int)           |                    
- | boolean biggerThan(IShape) |                    
- | boolean contains(CartPt)   |                    
- +----------------------------+                    
-                    |                                    
-                   / \                                   
-                   ---                                   
-                    |                                    
-             -----------------------------------------------------------------------------------------------------                  
-             |                                   |                                |                               |
-   +----------------------------+   +----------------------------+   +----------------------------+   +----------------------------+
-   | Circle                     |   | Square                     |   | Triangle                   |   | Rectangle                  |
-   +----------------------------+   +----------------------------+   +----------------------------+   +----------------------------+
- +-| CartPt center              | +-| CartPt nw                  | +-| CartPt ne                  | +-| CartPt sw                  |
- | | int radius                 | | | int size                   | | | int base                   | | | int height                 |
- | |                            | | |                            | | | int height                 | | | int base                   |
- | | String color               | | | String color               | | | String color               | | | String color               |
- | +----------------------------+ | +----------------------------+ | +----------------------------+ | +----------------------------+
- | | double area()              | | | double area()              | | | double area()              | | | double area()              |
- | | double distToOrigin()      | | | double distToOrigin()      | | | double distToOrigin()      | | | double distToOrigin()      |
- | | IShape grow(int)           | | | IShape grow(int)           | | | IShape grow(int)           | | | IShape grow(int)           |
- | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) |
- | | boolean contains(CartPt)   | | | boolean contains(CartPt)   | | | boolean contains(CartPt)   | | | boolean contains(CartPt)   |
- | +----------------------------+ | +----------------------------+ | +----------------------------+ | +----------------------------+
- +----+ +-------------------------+--------------------------------+--------------------------------+
-      | |
-      v v                                                                     
- +-----------------------+
- | CartPt                |
- +-----------------------+
- | int x                 |
- | int y                 |
- +-----------------------+
- | double distToOrigin() |
- | double distTo(CartPt) |
- +-----------------------+ 
+                                                  +----------------------------+                    
+                                                  | IShape                     |                    
+                                                  +----------------------------+                    
+                                                  | double area()              |                    
+                                                  | double distToOrigin()      |                    
+                                                  | IShape grow(int)           |                    
+                                                  | boolean biggerThan(IShape) |                    
+                                                  | boolean contains(CartPt)   |                    
+                                                  +----------------------------+                    
+                                                                  |                                    
+                                                                 / \                                   
+                                                                 ---                                   
+                                                                  |                                    
+             ------------------------------------------------------------------------------------------------------------------------+                  
+             |                                   |                                |                               |                  |
+   +----------------------------+   +----------------------------+   +----------------------------+   +----------------------------+ |
+   | Circle                     |   | Square                     |   | Triangle                   |   | Rectangle                  | |
+   +----------------------------+   +----------------------------+   +----------------------------+   +----------------------------+ |
+ +-| CartPt center              | +-| CartPt nw                  | +-| CartPt ne                  | +-| CartPt sw                  | |
+ | | int radius                 | | | int size                   | | | int base                   | | | int height                 | |
+ | | String color               | | | String color               | | | int height                 | | | int base                   | |
+ | |                            | | |                            | | | String color               | | | String color               | |
+ | +----------------------------+ | +----------------------------+ | +----------------------------+ | +----------------------------+ |
+ | | double area()              | | | double area()              | | | double area()              | | | double area()              | |
+ | | double distToOrigin()      | | | double distToOrigin()      | | | double distToOrigin()      | | | double distToOrigin()      | |
+ | | IShape grow(int)           | | | IShape grow(int)           | | | IShape grow(int)           | | | IShape grow(int)           | |
+ | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) | | | boolean biggerThan(IShape) | |
+ | | boolean contains(CartPt)   | | | boolean contains(CartPt)   | | | boolean contains(CartPt)   | | | boolean contains(CartPt)   | |
+ | +----------------------------+ | +----------------------------+ | +----------------------------+ | +----------------------------+ |
+ +----+ +-------------------------+--------------------------------+--------------------------------+                                |
+      | |                                                                                     +--------------------------------------+                                     
+      v v                                                                                     |
+ +-----------------------+                                                       +----------------------------+        
+ | CartPt                |                                                       | Combo                      |
+ +-----------------------+                                                       +----------------------------+
+ | int x                 |                                                       | IShape first               |
+ | int y                 |                                                       | IShape second              |
+ +-----------------------+                                                       +----------------------------+
+ | double distToOrigin() |                                                       | double area()              |
+ | double distTo(CartPt) |                                                       | double distanceToOrigin()  |
+ +-----------------------+                                                       | IShape grow()              |
+                                                                                 | biggerThan()               |
+                                                                                 | contains()                 |
+                                                                                 +----------------------------+
  */
 
 // to represent a geometric shape
@@ -231,6 +234,28 @@ class Rectangle implements IShape {
         return (this.sw.x <= pt.x) && (pt.x <= this.sw.x + this.base) &&
                (this.sw.y <= pt.y) && (pt.y <= this.sw.y + this.height);
     }
+}
+
+// to represent Combo
+class Combo implements IShape {
+    IShape first;
+    IShape second;
+
+    // the constructor
+    Combo(IShape first, IShape second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    // compute the sum of two areas
+
+    // compute the minimum distance og the two IShapes
+
+    // increase the size of the two shapes by the given increment
+
+    // determine which shape is bigger than the other
+
+    // determine if the shapes (including the boundary) contain the given point
 }
 
 /*
