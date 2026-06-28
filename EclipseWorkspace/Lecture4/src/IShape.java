@@ -252,7 +252,7 @@ class Combo implements IShape {
         return this.first.area() + this.second.area();
     }
 
-    // compute the minimum distance og the two IShapes
+    // compute the minimum distance of the two IShapes
     public double distToOrigin() {
         return Math.min(this.first.distToOrigin(), this.second.distToOrigin());
     }
@@ -327,6 +327,10 @@ class ExamplesShapes {
     IShape r1 = new Rectangle(new CartPt(50, 50), 20, 10, "red");
     IShape r2 = new Rectangle(new CartPt(50, 50), 40, 20, "blue");
     IShape r3 = new Rectangle(new CartPt(50, 50), 50, 80, "yellow");
+
+    IShape combo1 = new Combo(c1 t1)
+    IShape combo2 = new Combo(s1 r1)
+    IShape combo3 = new Combo(c2 s3)
     
     // test the method distToOrigin in the class CartPt
     boolean testDistToOrigin(Tester t) { 
@@ -481,6 +485,43 @@ class ExamplesShapes {
         return
         t.checkExpect(this.r1.contains(new CartPt(100, 100)), false) &&
         t.checkExpect(this.r1.contains(new CartPt(60, 55)), true);
+    }
+
+    // test method to compute the sum of two areas in Combo class
+    boolean testComboArea(Tester t) {
+        return
+        t.checkInexact(this.combo1.area(), 339.15, 0.01) &&
+        t.checkInexact(this.combo2.area(), 1100.0, 0.01);
+    }
+
+    // test method to find the minimum distance of the two IShapes in Combo class
+    boolean testComboDistToOrigin(Tester t) {
+        return
+        t.checkInexact(this.combo1.distToOrigin(), 60.71, 0.01) &&
+        t.checkInexact(this.combo2.distToOrigin(), 70.71, 0.01);
+    }
+
+    // test the method grow in the class Combo
+    boolean testComboGrow(Tester t) {
+        return
+        t.checkExpect(this.combo1.grow(20), new Combo(this.c1.grow(20), this.t1.grow(20))) &&
+        t.checkExpect(this.combo2.grow(10), new Combo(this.s1.grow(10), this.r1.grow(10)));
+    }
+
+    // test the method biggerThan in the class Combo
+    boolean testComboBiggerThan(Tester t) {
+        return
+        t.checkExpect(this.combo2.biggerThan(this.combo1), true) &&
+        t.checkExpect(this.combo1.biggerThan(this.combo2), false) &&
+        t.checkExpect(this.combo1.biggerThan(this.s1), false);
+    }
+
+    // test the method contains in the class Combo
+    boolean testComboContains(Tester t) {
+        return
+        t.checkExpect(this.combo1.contains(new CartPt(40, 60)), true)  && 
+        t.checkExpect(this.combo1.contains(new CartPt(45, 53)), true)  && 
+        t.checkExpect(this.combo1.contains(new CartPt(100, 100)), false); 
     }
 
 }
