@@ -51,7 +51,7 @@ import tester.*;
  | int y                 |                                                       | IShape second              |
  +-----------------------+                                                       +----------------------------+
  | double distToOrigin() |                                                       | double area()              |
- | double distTo(CartPt) |                                                       | double distanceToOrigin()  |
+ | double distTo(CartPt) |                                                       | double distToOrigin()      |
  +-----------------------+                                                       | IShape grow()              |
                                                                                  | biggerThan()               |
                                                                                  | contains()                 |
@@ -248,14 +248,29 @@ class Combo implements IShape {
     }
 
     // compute the sum of two areas
+    public double area() {
+        return this.first.area() + this.second.area();
+    }
 
     // compute the minimum distance og the two IShapes
+    public double distToOrigin() {
+        return Math.min(this.first.distToOrigin(), this.second.distToOrigin());
+    }
 
     // increase the size of the two shapes by the given increment
+    public IShape grow(int inc) {
+        return new Combo(this.first.grow(inc), this.second.grow(inc));
+    }
 
     // determine which shape is bigger than the other
+    public boolean biggerThan(IShape that) {
+        return this.area() >= that.area();
+    }
 
     // determine if the shapes (including the boundary) contain the given point
+    public boolean contains(pt) {
+        return this.first.contains(pt) || this.second.contains(pt);
+    }
 }
 
 /*
