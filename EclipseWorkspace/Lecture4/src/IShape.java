@@ -268,7 +268,7 @@ class Combo implements IShape {
     }
 
     // determine if the shapes (including the boundary) contain the given point
-    public boolean contains(pt) {
+    public boolean contains(CartPt pt) {
         return this.first.contains(pt) || this.second.contains(pt);
     }
 }
@@ -328,9 +328,9 @@ class ExamplesShapes {
     IShape r2 = new Rectangle(new CartPt(50, 50), 40, 20, "blue");
     IShape r3 = new Rectangle(new CartPt(50, 50), 50, 80, "yellow");
 
-    IShape combo1 = new Combo(c1 t1)
-    IShape combo2 = new Combo(s1 r1)
-    IShape combo3 = new Combo(c2 s3)
+    IShape combo1 = new Combo(c1, t1);
+    IShape combo2 = new Combo(s1, r1);
+    IShape combo3 = new Combo(c2, s3);
     
     // test the method distToOrigin in the class CartPt
     boolean testDistToOrigin(Tester t) { 
@@ -455,7 +455,7 @@ class ExamplesShapes {
     // test the method area in the class Rectangle
     boolean testRectangleArea(Tester t) {
         return
-        t.checkInexact(this.r1.area(), 200, 0.01);
+        t.checkInexact(this.r1.area(), 200.0, 0.01);
     } 
 
     // test the method grow in the class Rectangle
@@ -519,9 +519,9 @@ class ExamplesShapes {
     // test the method contains in the class Combo
     boolean testComboContains(Tester t) {
         return
-        t.checkExpect(this.combo1.contains(new CartPt(40, 60)), true)  && 
-        t.checkExpect(this.combo1.contains(new CartPt(45, 53)), true)  && 
-        t.checkExpect(this.combo1.contains(new CartPt(100, 100)), false); 
-    }
+        t.checkExpect(this.combo1.contains(new CartPt(55, 55)), true)  &&
+        t.checkExpect(this.combo1.contains(new CartPt(45, 53)), true)  &&
+        t.checkExpect(this.combo1.contains(new CartPt(100, 100)), false);
+}
 
 }

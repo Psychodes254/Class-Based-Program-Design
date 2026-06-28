@@ -4,3 +4,4 @@ EclipseJars/
 .classpath
 .project
 .factorypath
+*.class
