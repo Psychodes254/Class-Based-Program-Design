@@ -67,6 +67,7 @@ interface ILoBook {
   int count();
   double totalPrice();
   ILoBook cheaperThan(int price);
+  double salePrice(int discount);
 }
 
 // to represent MtLoBook class
@@ -83,6 +84,10 @@ class MtLoBook implements ILoBook {
   
   public ILoBook cheaperThan(int price) {
     return this;
+  }
+  
+  public double salePrice(int discount) {
+    return 0;
   }
 }
 
@@ -110,6 +115,10 @@ class ConsLoBook implements ILoBook {
       return new ConsLoBook(this.first, this.rest.cheaperThan(price));
     else
       return this.rest.cheaperThan(price);
+  }
+  
+  public double salePrice(int discount) {
+    return this.first.salePrice(discount) + rest.salePrice(discount);
   }
 }
 
@@ -153,6 +162,15 @@ class ILoBooksExample{
     t.checkExpect(this.hpList3.cheaperThan(30), new ConsLoBook(hp1, new MtLoBook())) &&
     t.checkExpect(this.hpList3.cheaperThan(40), new ConsLoBook(hp1, new ConsLoBook(hp2, new MtLoBook()))) &&
     t.checkExpect(this.hpList3.cheaperThan(10), new MtLoBook());
+  }
+  
+  // test the salePrice method
+  boolean testSalePrice(Tester t) {
+    return 
+    t.checkExpect(this.hpList3.salePrice(20), 72.0) &&
+    t.checkExpect(this.hpList2.salePrice(25), 52.5) &&
+    t.checkExpect(this.hpList1.salePrice(30), 14.0) &&
+    t.checkExpect(this.emptyList.salePrice(15), 0.0);
   }
 }
 
