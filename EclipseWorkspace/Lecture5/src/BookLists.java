@@ -7,7 +7,7 @@ import tester.*;
                +--------------------------------+                       |
                | int count()                    |                       |
                | double salePrice(int discount) |                       |
-               | ILoBook allBefore(int y)       |                       |
+               | ILoBook allBefore(int year)    |                       |
                | ILoBook sortByPrice()          |                       |
                +--------------------------------+                       |
                                 |                                       |
@@ -24,9 +24,9 @@ import tester.*;
 | double totalPrice()            | | +--------------------------------+
 | ILoBook cheaperThan(int price) | | | int count()                    |
 | double salePrice(int discount) | | | double totalPrice()            |
-| ILoBook allBefore(int y)       | | | ILoBook cheaperThan(int price) |
+| ILoBook allBefore(int year)    | | | ILoBook cheaperThan(int price) |
 | ILoBook sortByPrice()          | | | double salePrice(int discount) |
-+--------------------------------+ | | ILoBook allBefore(int y)       |
++--------------------------------+ | | ILoBook allBefore(int year)    |
                                    | | ILoBook sortByPrice()          |
                                    | +--------------------------------+
                                    v
@@ -64,10 +64,21 @@ class Book {
 
 // to represent ILoBook interface
 interface ILoBook {
+  // count the books in this list
   int count();
+  
+  // calculate the total price of all the books in a given list of Books
   double totalPrice();
+  
+  // produce the books that are cheaper than the price given
   ILoBook cheaperThan(int price);
+  
+  // calculate the total sale price of all books in this list for a given discount 
   double salePrice(int discount);
+  
+  // produce a list of all books published before the given date
+  // from this list of books
+  ILoBook allBefore(int year);
 }
 
 // to represent MtLoBook class
@@ -88,6 +99,10 @@ class MtLoBook implements ILoBook {
   
   public double salePrice(int discount) {
     return 0;
+  }
+  
+  public ILoBook allBefore(int year) {
+    return this;
   }
 }
 
@@ -119,6 +134,13 @@ class ConsLoBook implements ILoBook {
   
   public double salePrice(int discount) {
     return this.first.salePrice(discount) + rest.salePrice(discount);
+  }
+  
+  public ILoBook allBefore(int year) {
+    if (this.first.year < year)
+      return new ConsLoBook(this.first, this.rest.allBefore(year));
+    else
+      return this.rest.allBefore(year);
   }
 }
 
@@ -171,6 +193,16 @@ class ILoBooksExample{
     t.checkExpect(this.hpList2.salePrice(25), 52.5) &&
     t.checkExpect(this.hpList1.salePrice(30), 14.0) &&
     t.checkExpect(this.emptyList.salePrice(15), 0.0);
+  }
+  
+  // test the allBefore method
+  boolean testAllBefore(Tester t) {
+    return 
+    t.checkExpect(this.emptyList.allBefore(1998), new MtLoBook()) && 
+    t.checkExpect(this.hpList3.allBefore(2008), hpList3) &&
+    t.checkExpect(this.hpList2.allBefore(2001), new ConsLoBook(hp2, new MtLoBook())) &&
+    t.checkExpect(this.hpList3.allBefore(1995), new MtLoBook()) &&
+    t.checkExpect(this.hpList1.allBefore(2000), new ConsLoBook(hp1, new MtLoBook()));
   }
 }
 
