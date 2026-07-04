@@ -60,6 +60,11 @@ class Book {
   double salePrice(int discount) {
     return this.price - (this.price * discount) / 100;
   }
+  
+  //is the price of this book cheaper than the price of the given book?
+  boolean cheaperThan(Book that) {
+    return this.price < that.price;
+  }
 }
 
 // to represent ILoBook interface
@@ -79,6 +84,13 @@ interface ILoBook {
   // produce a list of all books published before the given date
   // from this list of books
   ILoBook allBefore(int year);
+  
+  // produce a list of all books in this list, sorted by their price
+  ILoBook sortByPrice();
+  
+  // insert the given book into this list of books
+  // already sorted by price
+  ILoBook insert(Book b);
 }
 
 // to represent MtLoBook class
@@ -103,6 +115,14 @@ class MtLoBook implements ILoBook {
   
   public ILoBook allBefore(int year) {
     return this;
+  }
+  
+  public ILoBook sortByPrice() {
+    return this;
+  }
+  
+  public ILoBook insert(Book b) {
+    return new ConsLoBook(b, this);
   }
 }
 
@@ -142,6 +162,17 @@ class ConsLoBook implements ILoBook {
     else
       return this.rest.allBefore(year);
   }
+  
+  public ILoBook insert(Book b) {
+    if (this.first.cheaperThan(b))
+      return new ConsLoBook(this.first, this.rest.insert(b));
+    else
+      return new ConsLoBook(b, this);
+  }
+  
+  public ILoBook sortByPrice() {
+    return this.rest.sortByPrice().insert(this.first);
+  }
 }
 
 // tests and examples for ILoBook interface and Book class
@@ -156,6 +187,7 @@ class ILoBooksExample{
   ILoBook emptyList = new MtLoBook();
   ILoBook hpList2 = new ConsLoBook(hp2, new ConsLoBook(hp3, new MtLoBook()));
   ILoBook hpList1 = new ConsLoBook(hp1, new MtLoBook());
+  ILoBook unsorted = new ConsLoBook(hp2, new ConsLoBook(hp1, new ConsLoBook(hp3, new MtLoBook())));
   
   // test the count method
   boolean testCount(Tester t) {
@@ -204,7 +236,16 @@ class ILoBooksExample{
     t.checkExpect(this.hpList3.allBefore(1995), new MtLoBook()) &&
     t.checkExpect(this.hpList1.allBefore(2000), new ConsLoBook(hp1, new MtLoBook()));
   }
+  
+  // test the sortByPrice method
+  boolean testSortByPrice(Tester t) {
+    return
+    t.checkExpect(this.emptyList.sortByPrice(), new MtLoBook()) &&
+    t.checkExpect(this.unsorted.sortByPrice(), hpList3);
+  }
 }
+
+
 
 
 
