@@ -9,6 +9,7 @@ import tester.*;
                | double salePrice(int discount) |                       |
                | ILoBook allBefore(int year)    |                       |
                | ILoBook sortByPrice()          |                       |
+               | ILoBook sortByTitle()          |                       |
                +--------------------------------+                       |
                                 |                                       |
                                / \                                      |
@@ -26,8 +27,9 @@ import tester.*;
 | double salePrice(int discount) | | | double totalPrice()            |
 | ILoBook allBefore(int year)    | | | ILoBook cheaperThan(int price) |
 | ILoBook sortByPrice()          | | | double salePrice(int discount) |
-+--------------------------------+ | | ILoBook allBefore(int year)    |
-                                   | | ILoBook sortByPrice()          |
+| ILoBook sortByTitle()          | | | ILoBook allBefore(int year)    |
++--------------------------------+ | | ILoBook sortByPrice()          |
+                                   | | ILoBook sortByTitle()          |
                                    | +--------------------------------+
                                    v
                    +--------------------------------+
@@ -39,6 +41,8 @@ import tester.*;
                    | double price                   |
                    +--------------------------------+
                    | double salePrice(int discount) |
+                   | boolean cheaperThan(Book that) |
+                   | boolean titleBefore(Book that) |
                    +--------------------------------+ 
 */
 
@@ -61,9 +65,14 @@ class Book {
     return this.price - (this.price * discount) / 100;
   }
   
-  //is the price of this book cheaper than the price of the given book?
+  // is the price of this book cheaper than the price of the given book?
   boolean cheaperThan(Book that) {
     return this.price < that.price;
+  }
+  
+  // check the lexicographic of the title with given string
+  int titleBefore(Book that) {
+    return this.title.compareTo(that.title); 
   }
 }
 
@@ -91,6 +100,13 @@ interface ILoBook {
   // insert the given book into this list of books
   // already sorted by price
   ILoBook insert(Book b);
+  
+  // insert the given book into this list of books
+  // already sorted by title
+  ILoBook insertByTitle(Book b);
+ 
+  // produce a list of all books in this list, sorted by their title
+  ILoBook sortByTitle();
 }
 
 // to represent MtLoBook class
@@ -123,6 +139,14 @@ class MtLoBook implements ILoBook {
   
   public ILoBook insert(Book b) {
     return new ConsLoBook(b, this);
+  }
+  
+  public ILoBook insertByTitle(Book b) {
+    return new ConsLoBook(b, this);
+  }
+  
+  public ILoBook sortByTitle() {
+    return this;
   }
 }
 
@@ -172,6 +196,17 @@ class ConsLoBook implements ILoBook {
   
   public ILoBook sortByPrice() {
     return this.rest.sortByPrice().insert(this.first);
+  }
+  
+  public ILoBook insertByTitle(Book b) {
+    if (this.first.titleBefore(b) < 0)
+      return new ConsLoBook(this.first, this.rest.insertByTitle(b));
+    else
+      return new ConsLoBook(b, this);
+  }
+  
+  public ILoBook sortByTitle() {
+    return this.rest.sortByTitle().insertByTitle(this.first);
   }
 }
 
@@ -243,20 +278,11 @@ class ILoBooksExample{
     t.checkExpect(this.emptyList.sortByPrice(), new MtLoBook()) &&
     t.checkExpect(this.unsorted.sortByPrice(), hpList3);
   }
+  
+  // test the sortByTitle method
+  boolean testSortByTitle(Tester t) {
+    return
+    t.checkExpect(this.emptyList.sortByTitle(), new MtLoBook()) &&
+    t.checkExpect(this.unsorted.sortByTitle(), hpList3);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
