@@ -7,6 +7,12 @@ interface IAT {
   
   // count helper
   int countHelper();
+  
+  // count the number of female in a given tree
+  int countFemale();
+  
+  // countFemale helper
+  int countFemaleHelper();
 }
 
 // to represent Unknown class
@@ -18,6 +24,14 @@ class Unknown implements IAT {
   }
   
   public int countHelper() {
+    return 0;
+  }
+  
+  public int countFemale() {
+    return 0;
+  }
+  
+  public int countFemaleHelper() {
     return 0;
   }
 }
@@ -45,6 +59,17 @@ class Person implements IAT {
   
   public int countHelper() {
     return 1 + this.mom.countHelper() + this.dad.countHelper();
+  }
+  
+  public int countFemale() {
+    return this.dad.countFemaleHelper() + this.mom.countFemaleHelper();
+  }
+  
+  public int countFemaleHelper() {
+    if (this.isMale == false)
+      return 1 + this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
+    else
+      return this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
   }
 }
 
@@ -77,5 +102,12 @@ class ExamplesIAT {
     return
     t.checkExpect(this.enid.count(), 0) &&
     t.checkExpect(this.andrew.count(), 16);
+  }
+  
+  // test the countFemale method
+  boolean testCountFemale(Tester t) {
+    return
+    t.checkExpect(this.emma.countFemale(), 0)  &&
+    t.checkExpect(this.andrew.countFemale(), 8);
   }
 }
