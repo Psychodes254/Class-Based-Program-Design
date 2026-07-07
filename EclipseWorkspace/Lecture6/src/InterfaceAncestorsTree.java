@@ -1,11 +1,25 @@
 import tester.*;
 
 // to represent IAT
-interface IAT { }
+interface IAT { 
+  // count no. of people in a given tree
+  int count();
+  
+  // count helper
+  int countHelper();
+}
 
 // to represent Unknown class
 class Unknown implements IAT {
   Unknown() { }
+  
+  public int count() {
+    return 0;
+  }
+  
+  public int countHelper() {
+    return 0;
+  }
 }
 
 // to represent Person class
@@ -23,6 +37,14 @@ class Person implements IAT {
     this.isMale = isMale;
     this.mom = mom;
     this.dad = dad;
+  }
+  
+  public int count() {
+    return this.mom.countHelper() + this.dad.countHelper();
+  }
+  
+  public int countHelper() {
+    return 1 + this.mom.countHelper() + this.dad.countHelper();
   }
 }
 
@@ -49,4 +71,11 @@ class ExamplesIAT {
   IAT bree = new Person("Bree", 1981, false, this.claire, this.cameron);
 
   IAT andrew = new Person("Andrew", 2001, true, this.bree, this.bill);
+  
+  // test the count method
+  boolean testCount(Tester t) {
+    return
+    t.checkExpect(this.enid.count(), 0) &&
+    t.checkExpect(this.andrew.count(), 16);
+  }
 }
