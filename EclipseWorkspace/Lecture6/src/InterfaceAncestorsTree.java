@@ -1,5 +1,36 @@
 import tester.*;
 
+// to represent ILoS
+interface ILoString  { 
+  //append another list of names onto the end of this list
+  ILoString append(ILoString other);  
+}
+
+// to represent ConsLoString 
+class ConsLoString implements ILoString  {
+  String first;
+  ILoString rest;
+  
+  // the constructor
+  ConsLoString(String first, ILoString rest) {
+    this.first = first;
+    this.rest = rest;
+  }
+  
+  public ILoString append(ILoString other) {
+    return new ConsLoString(this.first, this.rest.append(other));
+  }
+}
+
+// to represent MtLoString 
+class MtLoString implements ILoString {
+  MtLoString () { }
+  
+  public ILoString append(ILoString other) {
+    return other;
+  }
+}
+
 // to represent IAT
 interface IAT { 
   // count no. of people in a given tree
@@ -25,6 +56,9 @@ interface IAT {
   
   // countFemaleOver40 helper
   int countFemaleOver40Helper();
+  
+  // list of this person's name followed by all their ancestors' names
+  ILoString ancNames();
 }
 
 // to represent Unknown class
@@ -61,6 +95,10 @@ class Unknown implements IAT {
   
   public int countFemaleOver40Helper() {
     return 0;
+  }
+  
+  public ILoString ancNames() {
+    return new MtLoString();
   }
 }
 
@@ -120,6 +158,10 @@ class Person implements IAT {
       return 1 + this.mom.countFemaleOver40Helper() + this.dad.countFemaleOver40Helper();
     else
       return this.mom.countFemaleOver40Helper() + this.dad.countFemaleOver40Helper();
+  }
+  
+  public ILoString ancNames() {
+    return new ConsLoString(this.name, this.mom.ancNames().append(this.dad.ancNames()));
   }
 }
 
@@ -185,7 +227,6 @@ class ExamplesIAT {
   }
   
   // test the AncNames method
-  /*
   boolean testAncNames(Tester t) {
     return
         t.checkExpect(this.david.ancNames(),
@@ -195,7 +236,6 @@ class ExamplesIAT {
             new ConsLoString("Eustace", new MtLoString())) &&
         t.checkExpect(new Unknown().ancNames(), new MtLoString());
   }
-  */
   
   // test the youngestGrandparent method
   /*
