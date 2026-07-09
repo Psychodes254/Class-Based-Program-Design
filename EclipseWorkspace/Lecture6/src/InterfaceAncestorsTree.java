@@ -19,6 +19,12 @@ interface IAT {
   
   // wellFormed helper
   boolean wellFormedHelper(int childYOB);
+  
+  // compute how many female are older than 40
+  int countFemaleOver40();
+  
+  // countFemaleOver40 helper
+  int countFemaleOver40Helper();
 }
 
 // to represent Unknown class
@@ -47,6 +53,14 @@ class Unknown implements IAT {
   
   public boolean wellFormedHelper(int childYOB) {
     return true;
+  }
+  
+  public int countFemaleOver40() {
+    return 0;
+  }
+  
+  public int countFemaleOver40Helper() {
+    return 0;
   }
 }
 
@@ -96,6 +110,17 @@ class Person implements IAT {
            this.dad.wellFormedHelper(childYOB) &&
            this.mom.wellFormedHelper(childYOB);
   }
+  
+  public int countFemaleOver40() {
+    return this.dad.countFemaleOver40Helper() + this.mom.countFemaleOver40Helper();
+  }
+  
+  public int countFemaleOver40Helper() {
+    if (this.isMale == false && 2015 - this.yob > 40)
+      return 1 + this.mom.countFemaleOver40Helper() + this.dad.countFemaleOver40Helper();
+    else
+      return this.mom.countFemaleOver40Helper() + this.dad.countFemaleOver40Helper();
+  }
 }
 
 // examples and tests for the class hierarchy that represents IAT
@@ -126,7 +151,10 @@ class ExamplesIAT {
   boolean testCount(Tester t) {
     return
     t.checkExpect(this.enid.count(), 0) &&
-    t.checkExpect(this.andrew.count(), 16);
+    t.checkExpect(this.andrew.count(), 16) &&
+    t.checkExpect(this.david.count(), 1) &&
+    t.checkExpect(this.enid.count(), 0) &&
+    t.checkExpect(new Unknown().count(), 0);
   }
   
   // test the countFemale method
@@ -136,9 +164,49 @@ class ExamplesIAT {
     t.checkExpect(this.andrew.countFemale(), 8);
   }
   
+  // test the countFemaleOver40 method
+  boolean testFemaleAncOver40(Tester t) {
+    return
+        t.checkExpect(this.andrew.countFemaleOver40(), 7) &&
+        t.checkExpect(this.bree.countFemaleOver40(), 3) &&
+        t.checkExpect(this.darcy.countFemaleOver40(), 1) &&
+        t.checkExpect(this.enid.countFemaleOver40(), 0) &&
+        t.checkExpect(new Unknown().countFemaleOver40(), 0);
+}
+  
   // test the wellFormed method
   boolean testWellFormed(Tester t) {
     return
-    t.checkExpect(this.andrew.wellFormed(), true);
+    t.checkExpect(this.andrew.wellFormed(), true) &&
+    t.checkExpect(new Unknown().wellFormed(), true) &&
+    t.checkExpect(
+        new Person("Zane", 2000, true, this.andrew, this.bree).wellFormed(),
+        false);
   }
+  
+  // test the AncNames method
+  /*
+  boolean testAncNames(Tester t) {
+    return
+        t.checkExpect(this.david.ancNames(),
+            new ConsLoString("David",
+                new ConsLoString("Edward", new MtLoString()))) &&
+        t.checkExpect(this.eustace.ancNames(),
+            new ConsLoString("Eustace", new MtLoString())) &&
+        t.checkExpect(new Unknown().ancNames(), new MtLoString());
+  }
+  */
+  
+  // test the youngestGrandparent method
+  /*
+  boolean testYoungestGrandparent(Tester t) {
+      return
+          t.checkExpect(this.emma.youngestGrandparent(), new Unknown()) &&
+          t.checkExpect(this.david.youngestGrandparent(), new Unknown()) &&
+          t.checkExpect(this.claire.youngestGrandparent(), this.eustace) &&
+          t.checkExpect(this.bree.youngestGrandparent(), this.dixon) &&
+          t.checkExpect(this.andrew.youngestGrandparent(), this.candace) &&
+          t.checkExpect(new Unknown().youngestGrandparent(), new Unknown());
+  }
+  */
 }
