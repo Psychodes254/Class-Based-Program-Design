@@ -13,6 +13,12 @@ interface IAT {
   
   // countFemale helper
   int countFemaleHelper();
+  
+  // check if the ancestor tree is well formed according to age
+  boolean wellFormed();
+  
+  // wellFormed helper
+  boolean wellFormedHelper(int childYOB);
 }
 
 // to represent Unknown class
@@ -33,6 +39,14 @@ class Unknown implements IAT {
   
   public int countFemaleHelper() {
     return 0;
+  }
+  
+  public boolean wellFormed() {
+    return true;
+  }
+  
+  public boolean wellFormedHelper(int childYOB) {
+    return true;
   }
 }
 
@@ -70,6 +84,17 @@ class Person implements IAT {
       return 1 + this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
     else
       return this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
+  }
+  
+  public boolean wellFormed() {
+    return this.mom.wellFormedHelper(yob) &&
+           this.dad.wellFormedHelper(yob);
+  }
+  
+  public boolean wellFormedHelper(int childYOB) {
+    return (this.yob < childYOB) &&
+           this.dad.wellFormedHelper(childYOB) &&
+           this.mom.wellFormedHelper(childYOB);
   }
 }
 
@@ -109,5 +134,11 @@ class ExamplesIAT {
     return
     t.checkExpect(this.emma.countFemale(), 0)  &&
     t.checkExpect(this.andrew.countFemale(), 8);
+  }
+  
+  // test the wellFormed method
+  boolean testWellFormed(Tester t) {
+    return
+    t.checkExpect(this.andrew.wellFormed(), true);
   }
 }
