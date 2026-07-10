@@ -68,6 +68,9 @@ interface IAT {
   
   // check the youngest parent
   IAT youngestParent();
+  
+  // check the youngest grandparent
+  IAT youngestGrandparent();
 }
 
 // to represent Unknown class
@@ -111,14 +114,18 @@ class Unknown implements IAT {
   }
   
   public IAT youngerIAT(IAT other) {
-    return new Unknown();
+    return other;
   }
   
   public IAT youngerIATHelper(IAT other, int otherYOB) {
-    return new Unknown();
+    return other;
   }
   
   public IAT youngestParent() {
+    return new Unknown();
+  }
+  
+  public IAT youngestGrandparent() {
     return new Unknown();
   }
 }
@@ -198,7 +205,11 @@ class Person implements IAT {
   
   public IAT youngestParent() {
     return this.dad.youngerIAT(mom);
-}
+  }
+  
+  public IAT youngestGrandparent() {
+    return this.mom.youngestParent().youngerIAT(this.dad.youngestParent());
+  }
 }
 
 // examples and tests for the class hierarchy that represents IAT
@@ -286,8 +297,8 @@ class ExamplesIAT {
     t.checkExpect(andrew.youngestParent(), bree) &&
     t.checkExpect(bree.youngestParent(), cameron);
   }
+  
   // test the youngestGrandparent method
-  /*
   boolean testYoungestGrandparent(Tester t) {
       return
           t.checkExpect(this.emma.youngestGrandparent(), new Unknown()) &&
@@ -297,5 +308,4 @@ class ExamplesIAT {
           t.checkExpect(this.andrew.youngestGrandparent(), this.candace) &&
           t.checkExpect(new Unknown().youngestGrandparent(), new Unknown());
   }
-  */
 }
