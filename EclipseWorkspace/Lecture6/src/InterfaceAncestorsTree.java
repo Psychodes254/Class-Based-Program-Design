@@ -71,6 +71,9 @@ interface IAT {
   
   // check the youngest grandparent
   IAT youngestGrandparent();
+  
+  // check the youngest ancestor in a generation
+  IAT youngestAncAtGen(int gen);
 }
 
 // to represent Unknown class
@@ -127,6 +130,13 @@ class Unknown implements IAT {
   
   public IAT youngestGrandparent() {
     return new Unknown();
+  }
+  
+  public IAT youngestAncAtGen(int gen) {
+    if ( gen == 0)
+      return this;
+    else 
+      return new Unknown();
   }
 }
 
@@ -209,6 +219,13 @@ class Person implements IAT {
   
   public IAT youngestGrandparent() {
     return this.mom.youngestParent().youngerIAT(this.dad.youngestParent());
+  }
+  
+  public IAT youngestAncAtGen(int gen) {
+    if ( gen == 0)
+      return this;
+    else 
+      return this.mom.youngestAncAtGen(gen-1).youngerIAT(this.dad.youngestAncAtGen(gen-1));
   }
 }
 
@@ -301,11 +318,21 @@ class ExamplesIAT {
   // test the youngestGrandparent method
   boolean testYoungestGrandparent(Tester t) {
       return
-          t.checkExpect(this.emma.youngestGrandparent(), new Unknown()) &&
-          t.checkExpect(this.david.youngestGrandparent(), new Unknown()) &&
-          t.checkExpect(this.claire.youngestGrandparent(), this.eustace) &&
-          t.checkExpect(this.bree.youngestGrandparent(), this.dixon) &&
-          t.checkExpect(this.andrew.youngestGrandparent(), this.candace) &&
-          t.checkExpect(new Unknown().youngestGrandparent(), new Unknown());
+      t.checkExpect(this.emma.youngestGrandparent(), new Unknown()) &&
+      t.checkExpect(this.david.youngestGrandparent(), new Unknown()) &&
+      t.checkExpect(this.claire.youngestGrandparent(), this.eustace) &&
+      t.checkExpect(this.bree.youngestGrandparent(), this.dixon) &&
+      t.checkExpect(this.andrew.youngestGrandparent(), this.candace) &&
+      t.checkExpect(new Unknown().youngestGrandparent(), new Unknown());
+  }
+  
+  // test the youngestAncAtGen method
+  boolean testYoungestAncAtGen(Tester t) {
+    return 
+    t.checkExpect(andrew.youngestAncAtGen(0), andrew) &&
+    t.checkExpect(andrew.youngestAncAtGen(1), bree) &&
+    t.checkExpect(andrew.youngestAncAtGen(2), candace) &&
+    t.checkExpect(andrew.youngestAncAtGen(3), dixon) &&
+    t.checkExpect(andrew.youngestAncAtGen(4), eustace);
   }
 }
