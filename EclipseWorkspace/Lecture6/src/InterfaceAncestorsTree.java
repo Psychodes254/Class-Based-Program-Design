@@ -59,6 +59,12 @@ interface IAT {
   
   // list of this person's name followed by all their ancestors' names
   ILoString ancNames();
+  
+  // compare the younger ancestor in IAt
+  IAT youngerIAT(IAT other);
+  
+  // youngerIAT helper method
+  IAT youngerIATHelper(IAT other, int otherYOB);
 }
 
 // to represent Unknown class
@@ -99,6 +105,14 @@ class Unknown implements IAT {
   
   public ILoString ancNames() {
     return new MtLoString();
+  }
+  
+  public IAT youngerIAT(IAT other) {
+    return new Unknown();
+  }
+  
+  public IAT youngerIATHelper(IAT other, int otherYOB) {
+    return new Unknown();
   }
 }
 
@@ -162,6 +176,17 @@ class Person implements IAT {
   
   public ILoString ancNames() {
     return new ConsLoString(this.name, this.mom.ancNames().append(this.dad.ancNames()));
+  }
+  
+  public IAT youngerIAT(IAT other) {
+    return other.youngerIATHelper(this, this.yob);
+  }
+  
+  public IAT youngerIATHelper(IAT other, int otherYOB) {
+    if (this.yob > otherYOB)
+      return this;
+    else
+      return other;
   }
 }
 
@@ -229,14 +254,20 @@ class ExamplesIAT {
   // test the AncNames method
   boolean testAncNames(Tester t) {
     return
-        t.checkExpect(this.david.ancNames(),
-            new ConsLoString("David",
-                new ConsLoString("Edward", new MtLoString()))) &&
-        t.checkExpect(this.eustace.ancNames(),
-            new ConsLoString("Eustace", new MtLoString())) &&
-        t.checkExpect(new Unknown().ancNames(), new MtLoString());
+    t.checkExpect(this.david.ancNames(),
+        new ConsLoString("David",
+            new ConsLoString("Edward", new MtLoString()))) &&
+    t.checkExpect(this.eustace.ancNames(),
+        new ConsLoString("Eustace", new MtLoString())) &&
+    t.checkExpect(new Unknown().ancNames(), new MtLoString());
   }
   
+  // test the youngerIAT method
+  boolean testYoungerIAT(Tester t) {
+    return
+    t.checkExpect(this.bree.youngerIAT(bill), bree) && 
+    t.checkExpect(this.cameron.youngerIAT(candace), candace);
+  }
   // test the youngestGrandparent method
   /*
   boolean testYoungestGrandparent(Tester t) {
