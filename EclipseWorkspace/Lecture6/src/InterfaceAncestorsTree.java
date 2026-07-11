@@ -74,6 +74,12 @@ interface IAT {
   
   // check the youngest ancestor in a generation
   IAT youngestAncAtGen(int gen);
+  
+  // check the number of male in ancestor tree
+  int countMale();
+  
+  // countMale Helper
+  int countMaleHelper();
 }
 
 // to represent Unknown class
@@ -137,6 +143,14 @@ class Unknown implements IAT {
       return this;
     else 
       return new Unknown();
+  }
+  
+  public int countMale() {
+    return 0;
+  }
+  
+  public int countMaleHelper() {
+    return 0;
   }
 }
 
@@ -226,6 +240,17 @@ class Person implements IAT {
       return this;
     else 
       return this.mom.youngestAncAtGen(gen-1).youngerIAT(this.dad.youngestAncAtGen(gen-1));
+  }
+  
+  public int countMale() {
+    return this.mom.countMaleHelper() + this.dad.countMaleHelper();
+  }
+  
+  public int countMaleHelper() {
+    if (this.isMale)
+      return 1 + this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
+    else
+      return this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
   }
 }
 
@@ -334,5 +359,19 @@ class ExamplesIAT {
     t.checkExpect(andrew.youngestAncAtGen(2), candace) &&
     t.checkExpect(andrew.youngestAncAtGen(3), dixon) &&
     t.checkExpect(andrew.youngestAncAtGen(4), eustace);
+  }
+  
+  // test the countMale method
+  boolean testCountMale(Tester t) {
+    return
+    t.checkExpect(this.enid.countMale(), 0) &&
+    t.checkExpect(this.edward.countMale(), 0) &&
+    t.checkExpect(this.david.countMale(), 1) &&
+    t.checkExpect(this.darcy.countMale(), 1) &&
+    t.checkExpect(this.claire.countMale(), 1) &&
+    t.checkExpect(this.bill.countMale(), 4) &&
+    t.checkExpect(this.bree.countMale(), 3) &&
+    t.checkExpect(this.andrew.countMale(), 8) &&
+    t.checkExpect(new Unknown().countMale(), 0);
   }
 }
