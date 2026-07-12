@@ -3,7 +3,10 @@ import tester.*;
 // to represent ILoS
 interface ILoString  { 
   //append another list of names onto the end of this list
-  ILoString append(ILoString other);  
+  ILoString append(ILoString other); 
+  
+  // check the string if it exists
+  boolean checkString(String name);
 }
 
 // to represent ConsLoString 
@@ -20,6 +23,13 @@ class ConsLoString implements ILoString  {
   public ILoString append(ILoString other) {
     return new ConsLoString(this.first, this.rest.append(other));
   }
+  
+  public boolean checkString(String name) {
+    if (this.first.equals(name))
+      return true;
+    else
+      return this.rest.checkString(name);
+  }
 }
 
 // to represent MtLoString 
@@ -28,6 +38,10 @@ class MtLoString implements ILoString {
   
   public ILoString append(ILoString other) {
     return other;
+  }
+  
+  public boolean checkString(String name) {
+    return false;
   }
 }
 
@@ -80,6 +94,9 @@ interface IAT {
   
   // countMale Helper
   int countMaleHelper();
+  
+  // search if a person has ancestor
+  boolean hasAncestor(String name);
 }
 
 // to represent Unknown class
@@ -151,6 +168,10 @@ class Unknown implements IAT {
   
   public int countMaleHelper() {
     return 0;
+  }
+  
+  public boolean hasAncestor(String name) {
+    return false;
   }
 }
 
@@ -251,6 +272,11 @@ class Person implements IAT {
       return 1 + this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
     else
       return this.mom.countFemaleHelper() + this.dad.countFemaleHelper();
+  }
+  
+  public boolean hasAncestor(String name) {
+    return this.mom.ancNames().checkString(name) ||
+           this.dad.ancNames().checkString(name);
   }
 }
 
@@ -373,5 +399,42 @@ class ExamplesIAT {
     t.checkExpect(this.bree.countMale(), 3) &&
     t.checkExpect(this.andrew.countMale(), 8) &&
     t.checkExpect(new Unknown().countMale(), 0);
+  }
+  
+  // test the hasAncestor method
+  boolean testHasAncestor(Tester t) {
+    return
+    t.checkExpect(new Unknown().hasAncestor("Emma"), false) &&
+
+    t.checkExpect(this.enid.hasAncestor("Edward"), false) &&
+    t.checkExpect(this.enid.hasAncestor("Enid"), false) &&
+
+    t.checkExpect(this.david.hasAncestor("Edward"), true) &&
+    t.checkExpect(this.david.hasAncestor("Emma"), false) &&
+    t.checkExpect(this.david.hasAncestor("David"), false) &&
+
+    t.checkExpect(this.darcy.hasAncestor("Emma"), true) &&
+    t.checkExpect(this.darcy.hasAncestor("Eustace"), true) &&
+    t.checkExpect(this.darcy.hasAncestor("Edward"), false) &&
+
+    t.checkExpect(this.claire.hasAncestor("Darcy"), true) &&
+    t.checkExpect(this.claire.hasAncestor("Emma"), true) &&
+    t.checkExpect(this.claire.hasAncestor("Eustace"), true) &&
+    t.checkExpect(this.claire.hasAncestor("David"), false) &&
+
+    t.checkExpect(this.bill.hasAncestor("Candace"), true) &&
+    t.checkExpect(this.bill.hasAncestor("Edward"), true) &&
+    t.checkExpect(this.bill.hasAncestor("Emma"), false) &&
+
+    t.checkExpect(this.andrew.hasAncestor("Bill"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Bree"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Claire"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Candace"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("David"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Edward"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Emma"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Eustace"), true) &&
+    t.checkExpect(this.andrew.hasAncestor("Andrew"), false) &&
+    t.checkExpect(this.andrew.hasAncestor("Alice"), false);
   }
 }
