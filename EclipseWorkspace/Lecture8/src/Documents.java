@@ -77,53 +77,114 @@ class Book implements IDocument  {
 }
 
 // to represent wikiArticles class
-class WikiArticles implements IDocument  {
+class WikiArticle implements IDocument  {
   DocumentInfo info;
   String url;
   
   // the constructor 
-  WikiArticles(DocumentInfo info, String url) {
+  WikiArticle(DocumentInfo info, String url) {
     this.info = info;
     this.url = url;
   }
 }
 
-//to represent examplesDocument
+//to represent examples of Documents
 class ExamplesDocuments {
 
   // examples of Author
   Author austen = new Author("Jane", "Austen", 1775);
   Author orwell = new Author("George", "Orwell", 1903);
+  Author tolkien = new Author("John", "Tolkien", 1892);
+  Author dickens = new Author("Charles", "Dickens", 1812);
+  Author bloom = new Author("Harold", "Bloom", 1930);
   Author wikiContributor = new Author("Anonymous", "Contributor", 0);
   
   // examples of Publisher
   Publisher penguin = new Publisher("Penguin Books", 1935);
   Publisher secker = new Publisher("Secker & Warburg", 1855);
+  Publisher oxford = new Publisher("Oxford University Press", 1586);
   
-  // examples of ILoDocument 
+  // empty bibliography
   ILoDocument mtBibliography = new MtLoDocument();
   
-  // examples of DocumentInfo
-  DocumentInfo prideInfo = new DocumentInfo(austen, "Pride and Prejudice", mtBibliography);
-  DocumentInfo javaWikiInfo = new DocumentInfo(wikiContributor, "Java (programming language)", mtBibliography);
-  
-  // examples of Book / WikiArticles
+  // LEAF DOCUMENTS (no references)
+  DocumentInfo prideInfo =
+     new DocumentInfo(austen, "Pride and Prejudice", mtBibliography);
   Book prideBook = new Book(prideInfo, penguin);
-  WikiArticles javaWiki = new WikiArticles(javaWikiInfo, "https://en.wikipedia.org/wiki/Java_(programming_language)");
   
-  // a bibliography that cites the above two documents
-  ILoDocument twoDocBibliography =
-     new ConsLoDocument(prideBook,
-         new ConsLoDocument(javaWiki, mtBibliography));
+  DocumentInfo emmaInfo =
+     new DocumentInfo(austen, "Emma", mtBibliography);
+  Book emmaBook = new Book(emmaInfo, penguin);
   
-  // examples of DocumentInfo 
-  DocumentInfo animalFarmInfo = new DocumentInfo(orwell, "Animal Farm", twoDocBibliography);
+  DocumentInfo hobbitInfo =
+     new DocumentInfo(tolkien, "The Hobbit", mtBibliography);
+  Book hobbitBook = new Book(hobbitInfo, penguin);
   
-  // examples of Book 
-  Book animalFarmBook = new Book(animalFarmInfo, secker);
+  DocumentInfo taleInfo =
+     new DocumentInfo(dickens, "A Tale of Two Cities", mtBibliography);
+  Book taleBook = new Book(taleInfo, penguin);
   
-  // examples of Document 
-  IDocument  doc1 = prideBook;
-  IDocument  doc2 = javaWiki;
-  IDocument  doc3 = animalFarmBook;
+  DocumentInfo javaWikiInfo =
+     new DocumentInfo(wikiContributor,
+         "Java (programming language)",
+         mtBibliography);
+  
+  WikiArticle javaWiki =
+     new WikiArticle(javaWikiInfo,
+         "https://en.wikipedia.org/wiki/Java_(programming_language)");
+  
+  // BOOK WITH REFERENCES
+  ILoDocument animalFarmBibliography =
+     new ConsLoDocument(prideBook, new ConsLoDocument(javaWiki, mtBibliography));
+  
+  DocumentInfo animalFarmInfo =
+     new DocumentInfo(orwell, "Animal Farm", animalFarmBibliography);
+  
+  Book animalFarmBook =
+     new Book(animalFarmInfo, secker);
+  
+  // WIKI REFERENCING A BOOK
+  ILoDocument pythonWikiBibliography =
+     new ConsLoDocument(animalFarmBook, mtBibliography);
+  
+  DocumentInfo pythonWikiInfo =
+     new DocumentInfo(wikiContributor, "Python (programming language)", pythonWikiBibliography);
+  
+  WikiArticle pythonWiki =
+     new WikiArticle(pythonWikiInfo, "https://en.wikipedia.org/wiki/Python_(programming_language)");
+  
+  // DUPLICATE REFERENCES
+  ILoDocument duplicateBibliography =
+     new ConsLoDocument(prideBook, new ConsLoDocument(prideBook, new ConsLoDocument(javaWiki, mtBibliography)));
+  
+  DocumentInfo duplicateSurveyInfo =
+     new DocumentInfo(bloom, "Duplicate Survey", duplicateBibliography);
+  
+  Book duplicateSurveyBook =
+     new Book(duplicateSurveyInfo, oxford);
+  
+  // DEEP RECURSION
+  ILoDocument literatureSurveyBibliography =
+     new ConsLoDocument(animalFarmBook,
+         new ConsLoDocument(emmaBook,
+             new ConsLoDocument(hobbitBook,
+                 new ConsLoDocument(taleBook,
+                     mtBibliography))));
+  
+  DocumentInfo literatureSurveyInfo =
+     new DocumentInfo(bloom, "Literature Survey", literatureSurveyBibliography);
+  
+  Book literatureSurveyBook =
+     new Book(literatureSurveyInfo, oxford);
+  
+  // Examples of IDocument
+  IDocument doc1 = prideBook;
+  IDocument doc2 = emmaBook;
+  IDocument doc3 = hobbitBook;
+  IDocument doc4 = taleBook;
+  IDocument doc5 = animalFarmBook;
+  IDocument doc6 = javaWiki;
+  IDocument doc7 = pythonWiki;
+  IDocument doc8 = duplicateSurveyBook;
+  IDocument doc9 = literatureSurveyBook;
 }
