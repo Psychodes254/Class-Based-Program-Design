@@ -48,10 +48,15 @@ DocumentInfo(Author author, String title, ILoDocument bibliography) {
 // to represent Document interface
 interface IDocument  {
   boolean isBook();
+  ILoDocument bibliography();
+  ILoDocument allDocuments();
 }
 
 // to represent ListOfDocument interface
-interface ILoDocument  { }
+interface ILoDocument  {
+  ILoDocument append(ILoDocument other);
+  ILoDocument allDocumentHelper();
+}
 
 // to represent ConsListOfDocument 
 class ConsLoDocument implements ILoDocument  {
@@ -63,11 +68,28 @@ class ConsLoDocument implements ILoDocument  {
     this.first = first;
     this.rest = rest;
   }
+  
+  public ILoDocument append(ILoDocument other) {
+    return new ConsLoDocument(this.first, this.rest.append(other));
+  }
+  
+  public ILoDocument allDocumentHelper() {
+    return new ConsLoDocument(this.first,
+        this.first.allDocuments().append(this.rest.allDocumentHelper()));
+  }
 }
 
 // to represent MtListOfDocument
 class MtLoDocument implements ILoDocument  {
   MtLoDocument() {}
+  
+  public ILoDocument append(ILoDocument other) {
+    return other;
+  }
+  
+  public ILoDocument allDocumentHelper() {
+    return this;
+  }
 }
 
 // to represent book class
@@ -85,6 +107,14 @@ class Book implements IDocument  {
     return true;
   }
   
+  public ILoDocument bibliography() {
+    return this.info.bibliography;
+  }
+  
+  public ILoDocument allDocuments() {
+    return this.bibliography().allDocumentHelper();
+  }
+  
 }
 
 // to represent wikiArticles class
@@ -100,6 +130,14 @@ class WikiArticle implements IDocument  {
   
   public boolean isBook() {
     return false;
+  }
+  
+  public ILoDocument bibliography() {
+    return this.info.bibliography;
+  }
+  
+  public ILoDocument allDocuments() {
+    return this.bibliography().allDocumentHelper();
   }
 }
 
@@ -219,5 +257,24 @@ class ExamplesDocuments {
     return t.checkExpect(
         this.javaWiki.isBook(),
         false);
+  }
+  
+  boolean testAnimalFarmBibliography(Tester t) {
+    return t.checkExpect(
+        this.animalFarmBook.bibliography(),
+        this.animalFarmBibliography);
+  }
+  
+  ILoDocument expectedAllDocuments =
+      new ConsLoDocument(animalFarmBook,
+          new ConsLoDocument(prideBook,
+              new ConsLoDocument(javaWiki,
+                  new ConsLoDocument(emmaBook,
+                      new ConsLoDocument(hobbitBook,
+                          new ConsLoDocument(taleBook, mtBibliography))))));
+  
+  boolean testAllDocuments(Tester t) {
+    return t.checkExpect(
+        this.literatureSurveyBook.allDocuments(), expectedAllDocuments);
   }
 }
