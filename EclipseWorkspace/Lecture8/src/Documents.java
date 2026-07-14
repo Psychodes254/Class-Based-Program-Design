@@ -50,6 +50,8 @@ interface IDocument  {
   boolean isBook();
   ILoDocument bibliography();
   ILoDocument allDocuments();
+  String getTitle();
+  String getAuthorLastName();
 }
 
 // to represent ListOfDocument interface
@@ -60,6 +62,8 @@ interface ILoDocument  {
   ILoDocument removeDuplicates();
   boolean contains(IDocument doc);
   ILoDocument removeAll(IDocument doc);
+  ILoDocument sort();
+  ILoDocument insert(IDocument doc);
 }
 
 // to represent ConsListOfDocument 
@@ -104,6 +108,19 @@ class ConsLoDocument implements ILoDocument  {
      else
        return new ConsLoDocument(this.first, this.rest.removeAll(doc));
    }
+   
+   public ILoDocument sort() {
+     return this.rest.sort().insert(this.first);
+   }
+
+   public ILoDocument insert(IDocument doc) {
+     if (doc.getAuthorLastName().compareTo(this.first.getAuthorLastName()) <= 0) {
+       return new ConsLoDocument(doc, this);
+     }
+     else {
+       return new ConsLoDocument(this.first, this.rest.insert(doc));
+     }
+   }
 }
 
 // to represent MtListOfDocument
@@ -133,6 +150,14 @@ class MtLoDocument implements ILoDocument  {
   public ILoDocument removeAll(IDocument doc) {
     return this;
   }
+  
+  public ILoDocument sort() {
+    return this;
+  }
+
+  public ILoDocument insert(IDocument doc) {
+    return new ConsLoDocument(doc, this);
+  }
 }
 
 // to represent book class
@@ -157,6 +182,14 @@ class Book implements IDocument  {
   public ILoDocument allDocuments() {
     return this.bibliography().allDocumentHelper();
   }  
+  
+  public String getTitle() {
+    return this.info.title;
+  }
+  
+  public String getAuthorLastName() {
+    return this.info.author.lastName;
+  }
 }
 
 // to represent wikiArticles class
@@ -180,6 +213,14 @@ class WikiArticle implements IDocument  {
   
   public ILoDocument allDocuments() {
     return this.bibliography().allDocumentHelper();
+  }
+  
+  public String getTitle() {
+    return this.info.title;
+  }
+
+  public String getAuthorLastName() {
+   return this.info.author.lastName;
   }
 }
 
@@ -336,5 +377,25 @@ class ExamplesDocuments {
             new ConsLoDocument(
                 this.javaWiki,
                 new MtLoDocument())));
+  }
+  
+  //unsorted
+  ILoDocument unsortedBibliography =
+     new ConsLoDocument(hobbitBook,
+         new ConsLoDocument(prideBook,
+             new ConsLoDocument(taleBook,
+                 new ConsLoDocument(animalFarmBook, mtBibliography))));
+  
+  //sorted alphabetically by author's last name
+  ILoDocument sortedBibliography =
+     new ConsLoDocument(prideBook,
+         new ConsLoDocument(taleBook,
+             new ConsLoDocument(animalFarmBook,
+                 new ConsLoDocument(hobbitBook, mtBibliography))));
+  
+  boolean testSort(Tester t) {
+   return t.checkExpect(
+       this.unsortedBibliography.sort(),
+       this.sortedBibliography);
   }
 }
