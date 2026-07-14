@@ -56,6 +56,7 @@ interface IDocument  {
 interface ILoDocument  {
   ILoDocument append(ILoDocument other);
   ILoDocument allDocumentHelper();
+  ILoDocument onlyBooks();
 }
 
 // to represent ConsListOfDocument 
@@ -77,6 +78,13 @@ class ConsLoDocument implements ILoDocument  {
     return new ConsLoDocument(this.first,
         this.first.allDocuments().append(this.rest.allDocumentHelper()));
   }
+  
+  public ILoDocument onlyBooks() {
+    if (this.first.isBook())
+      return new ConsLoDocument(this.first, this.rest.onlyBooks());
+    else
+      return this.rest.onlyBooks();
+  }
 }
 
 // to represent MtListOfDocument
@@ -88,6 +96,10 @@ class MtLoDocument implements ILoDocument  {
   }
   
   public ILoDocument allDocumentHelper() {
+    return this;
+  }
+  
+  public ILoDocument onlyBooks() {
     return this;
   }
 }
@@ -113,8 +125,7 @@ class Book implements IDocument  {
   
   public ILoDocument allDocuments() {
     return this.bibliography().allDocumentHelper();
-  }
-  
+  }  
 }
 
 // to represent wikiArticles class
@@ -276,5 +287,13 @@ class ExamplesDocuments {
   boolean testAllDocuments(Tester t) {
     return t.checkExpect(
         this.literatureSurveyBook.allDocuments(), expectedAllDocuments);
+  }
+  
+  boolean testOnlyBooks(Tester t) {
+    return t.checkExpect(
+        this.animalFarmBibliography.onlyBooks(),
+        new ConsLoDocument(
+            this.prideBook,
+            new MtLoDocument()));
   }
 }
