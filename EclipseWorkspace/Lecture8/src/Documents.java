@@ -57,6 +57,9 @@ interface ILoDocument  {
   ILoDocument append(ILoDocument other);
   ILoDocument allDocumentHelper();
   ILoDocument onlyBooks();
+  ILoDocument removeDuplicates();
+  boolean contains(IDocument doc);
+  ILoDocument removeAll(IDocument doc);
 }
 
 // to represent ConsListOfDocument 
@@ -85,6 +88,22 @@ class ConsLoDocument implements ILoDocument  {
     else
       return this.rest.onlyBooks();
   }
+  
+   public ILoDocument removeDuplicates() {
+     return new ConsLoDocument(this.first,
+         this.rest.removeAll(this.first).removeDuplicates());
+   }
+  
+   public boolean contains(IDocument doc) {
+     return this.first.equals(doc) || this.rest.equals(doc);
+   }
+  
+   public ILoDocument removeAll(IDocument doc) {
+     if (this.first.equals(doc))
+       return this.rest.removeAll(doc);
+     else
+       return new ConsLoDocument(this.first, this.rest.removeAll(doc));
+   }
 }
 
 // to represent MtListOfDocument
@@ -100,6 +119,18 @@ class MtLoDocument implements ILoDocument  {
   }
   
   public ILoDocument onlyBooks() {
+    return this;
+  }
+  
+  public ILoDocument removeDuplicates() {
+    return this;
+  }
+
+  public boolean contains(IDocument doc) {
+    return false;
+  }
+
+  public ILoDocument removeAll(IDocument doc) {
     return this;
   }
 }
@@ -295,5 +326,15 @@ class ExamplesDocuments {
         new ConsLoDocument(
             this.prideBook,
             new MtLoDocument()));
+  }
+  
+  boolean testRemoveDuplicates(Tester t) {
+    return t.checkExpect(
+        this.duplicateBibliography.removeDuplicates(),
+        new ConsLoDocument(
+            this.prideBook,
+            new ConsLoDocument(
+                this.javaWiki,
+                new MtLoDocument())));
   }
 }
