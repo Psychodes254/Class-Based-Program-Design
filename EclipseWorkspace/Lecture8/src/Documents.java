@@ -52,6 +52,7 @@ interface IDocument  {
   ILoDocument allDocuments();
   String getTitle();
   String getAuthorLastName();
+  String format();
 }
 
 // to represent ListOfDocument interface
@@ -64,6 +65,8 @@ interface ILoDocument  {
   ILoDocument removeAll(IDocument doc);
   ILoDocument sort();
   ILoDocument insert(IDocument doc);
+  String format();
+  String formatWithLeadingNewline();
 }
 
 // to represent ConsListOfDocument 
@@ -121,6 +124,14 @@ class ConsLoDocument implements ILoDocument  {
        return new ConsLoDocument(this.first, this.rest.insert(doc));
      }
    }
+   
+   public String format() {
+     return this.first.format() + this.rest.formatWithLeadingNewline();
+   }
+
+   public String formatWithLeadingNewline() {
+     return "\n" + this.first.format() + this.rest.formatWithLeadingNewline();
+   }
 }
 
 // to represent MtListOfDocument
@@ -158,6 +169,14 @@ class MtLoDocument implements ILoDocument  {
   public ILoDocument insert(IDocument doc) {
     return new ConsLoDocument(doc, this);
   }
+  
+  public String format() {
+    return "";
+  }
+
+  public String formatWithLeadingNewline() {
+    return "";
+  }
 }
 
 // to represent book class
@@ -190,6 +209,10 @@ class Book implements IDocument  {
   public String getAuthorLastName() {
     return this.info.author.lastName;
   }
+  
+  public String format() {
+    return this.info.author.formatName() + ". \"" + this.info.title + "\".";
+  }
 }
 
 // to represent wikiArticles class
@@ -221,6 +244,10 @@ class WikiArticle implements IDocument  {
 
   public String getAuthorLastName() {
    return this.info.author.lastName;
+  }
+  
+  public String format() {
+    return this.info.author.formatName() + ". \"" + this.info.title + "\".";
   }
 }
 
@@ -397,5 +424,31 @@ class ExamplesDocuments {
    return t.checkExpect(
        this.unsortedBibliography.sort(),
        this.sortedBibliography);
+  }
+  
+  //unsorted: Tale, Emma, Pride
+  ILoDocument unsortedBibliography2 =
+     new ConsLoDocument(taleBook,
+         new ConsLoDocument(emmaBook,
+             new ConsLoDocument(prideBook, mtBibliography)));
+  
+  //sorted by author's last name: Austen (Emma), Austen (Pride), Dickens (Tale)
+  ILoDocument sortedBibliography2 =
+     new ConsLoDocument(emmaBook,
+         new ConsLoDocument(prideBook,
+             new ConsLoDocument(taleBook, mtBibliography)));
+  
+  boolean testFormatBook(Tester t) {
+   return t.checkExpect(
+       this.prideBook.format(),
+       "Austen, Jane. \"Pride and Prejudice\".");
+  }
+  
+  boolean testFormatBibliography(Tester t) {
+   return t.checkExpect(
+       this.sortedBibliography2.format(),
+       "Austen, Jane. \"Emma\".\n"
+       + "Austen, Jane. \"Pride and Prejudice\".\n"
+       + "Dickens, Charles. \"A Tale of Two Cities\".");
   }
 }
