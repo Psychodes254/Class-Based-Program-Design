@@ -14,7 +14,7 @@ class Author {
   }
   
   String formatName() {
-    return lastName + ", " + firstName;
+    return this.lastName + ", " + this.firstName;
   }
   
 }
@@ -46,7 +46,9 @@ DocumentInfo(Author author, String title, ILoDocument bibliography) {
 }
 
 // to represent Document interface
-interface IDocument  { }
+interface IDocument  {
+  boolean isBook();
+}
 
 // to represent ListOfDocument interface
 interface ILoDocument  { }
@@ -79,6 +81,10 @@ class Book implements IDocument  {
     this.publisher = publisher;
   }
   
+  public boolean isBook() {
+    return true;
+  }
+  
 }
 
 // to represent wikiArticles class
@@ -90,6 +96,10 @@ class WikiArticle implements IDocument  {
   WikiArticle(DocumentInfo info, String url) {
     this.info = info;
     this.url = url;
+  }
+  
+  public boolean isBook() {
+    return false;
   }
 }
 
@@ -197,5 +207,17 @@ class ExamplesDocuments {
     return t.checkExpect(
         this.austen.formatName(),
         "Austen, Jane");
+  }
+  
+  boolean testBookIsBook(Tester t) {
+    return t.checkExpect(
+        this.prideBook.isBook(),
+        true);
+  }
+
+  boolean testWikiIsBook(Tester t) {
+    return t.checkExpect(
+        this.javaWiki.isBook(),
+        false);
   }
 }
