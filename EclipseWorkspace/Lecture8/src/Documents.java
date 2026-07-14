@@ -12,6 +12,11 @@ class Author {
     this.lastName = lastName;
     this.yob = yob;
   }
+  
+  String formatName() {
+    return lastName + ", " + firstName;
+  }
+  
 }
 
 // to represent Publisher class
@@ -187,4 +192,10 @@ class ExamplesDocuments {
   IDocument doc7 = pythonWiki;
   IDocument doc8 = duplicateSurveyBook;
   IDocument doc9 = literatureSurveyBook;
+  
+  boolean testAuthorName(Tester t) {
+    return t.checkExpect(
+        this.austen.formatName(),
+        "Austen, Jane");
+  }
 }
