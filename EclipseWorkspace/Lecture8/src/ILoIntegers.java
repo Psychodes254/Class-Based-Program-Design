@@ -7,6 +7,12 @@ interface ILoIntegers {
   
   // hasEven helper
   boolean hasEvenHelper(int num);
+  
+  //check if a list contains positive and odd integers
+  boolean hasPositiveOdd();
+  
+  // hasPositiveOdd Helper
+  boolean hasPositiveOddHelper(int num);
 }
 
 class ConsLoIntegers implements ILoIntegers{
@@ -29,6 +35,17 @@ class ConsLoIntegers implements ILoIntegers{
   public boolean hasEvenHelper(int num) {
     return (num % 2 == 0);
   }
+  
+  public boolean hasPositiveOdd() {
+    if (this.hasPositiveOddHelper(first))
+      return true;
+    else 
+      return this.rest.hasPositiveOdd();
+  }
+  
+  public boolean hasPositiveOddHelper(int num) {
+    return (num > 0 && ! hasEvenHelper(num));
+  }
 }
 
 class MtLoIntegers implements ILoIntegers{
@@ -39,6 +56,14 @@ class MtLoIntegers implements ILoIntegers{
   }
   
   public boolean hasEvenHelper(int num) {
+    return false;
+  }
+  
+  public boolean hasPositiveOdd() {
+    return false;
+  }
+  
+  public boolean hasPositiveOddHelper(int num) {
     return false;
   }
 }
@@ -73,5 +98,14 @@ class ExamplesIntegers {
         && t.checkExpect(list3.hasEven(), true)  
         && t.checkExpect(list4.hasEven(), true)   
         && t.checkExpect(list5.hasEven(), true); 
+}
+  
+  boolean testHasPositiveOdd(Tester t) {
+    return t.checkExpect(mt.hasPositiveOdd(), false)
+        && t.checkExpect(list1.hasPositiveOdd(), false)
+        && t.checkExpect(list2.hasPositiveOdd(), true)  
+        && t.checkExpect(list3.hasPositiveOdd(), true)  
+        && t.checkExpect(list4.hasPositiveOdd(), false) 
+        && t.checkExpect(list5.hasPositiveOdd(), true);  
 }
 }
