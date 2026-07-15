@@ -8,11 +8,17 @@ interface ILoIntegers {
   // hasEven helper
   boolean hasEvenHelper(int num);
   
-  //check if a list contains positive and odd integers
+  // check if a list contains positive and odd integers
   boolean hasPositiveOdd();
   
   // hasPositiveOdd Helper
   boolean hasPositiveOddHelper(int num);
+  
+  // check if a list is in between five and ten
+  boolean hasBetweenFiveAndTen();
+  
+  // hasBetweenFiveAndTen Helper
+  boolean hasBetweenFiveAndTenHelper(int num);
 }
 
 class ConsLoIntegers implements ILoIntegers{
@@ -46,6 +52,17 @@ class ConsLoIntegers implements ILoIntegers{
   public boolean hasPositiveOddHelper(int num) {
     return (num > 0 && ! hasEvenHelper(num));
   }
+  
+  public boolean hasBetweenFiveAndTen() {
+    if (this.hasBetweenFiveAndTenHelper(first))
+      return true;
+    else
+      return this.rest.hasBetweenFiveAndTen();
+  }
+  
+  public boolean hasBetweenFiveAndTenHelper(int num) {
+    return num >= 5 && num <= 10;
+  }
 }
 
 class MtLoIntegers implements ILoIntegers{
@@ -64,6 +81,14 @@ class MtLoIntegers implements ILoIntegers{
   }
   
   public boolean hasPositiveOddHelper(int num) {
+    return false;
+  }
+  
+  public boolean hasBetweenFiveAndTen() {
+    return false;
+  }
+  
+  public boolean hasBetweenFiveAndTenHelper(int num) {
     return false;
   }
 }
@@ -107,5 +132,14 @@ class ExamplesIntegers {
         && t.checkExpect(list3.hasPositiveOdd(), true)  
         && t.checkExpect(list4.hasPositiveOdd(), false) 
         && t.checkExpect(list5.hasPositiveOdd(), true);  
+}
+  
+  boolean testHasBetweenFiveAndTen(Tester t) {
+    return t.checkExpect(mt.hasBetweenFiveAndTen(), false)
+        && t.checkExpect(list1.hasBetweenFiveAndTen(), true)   
+        && t.checkExpect(list2.hasBetweenFiveAndTen(), false)
+        && t.checkExpect(list3.hasBetweenFiveAndTen(), true)   
+        && t.checkExpect(list4.hasBetweenFiveAndTen(), false)
+        && t.checkExpect(list5.hasBetweenFiveAndTen(), true);  
 }
 }
