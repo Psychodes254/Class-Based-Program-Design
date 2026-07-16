@@ -19,6 +19,13 @@ interface ILoIntegers {
   
   // hasBetweenFiveAndTen Helper
   boolean hasBetweenFiveAndTenHelper(int num);
+  
+ // check whether the list has an even, a positive odd,
+ // and a number between five and ten
+ boolean satisfiesCriteria();
+
+ // satisfiesCriteria helper
+ boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween);
 }
 
 class ConsLoIntegers implements ILoIntegers{
@@ -32,10 +39,8 @@ class ConsLoIntegers implements ILoIntegers{
   }
   
   public boolean hasEven() {
-    if (this.hasEvenHelper(first))
-      return true;
-    else
-      return this.rest.hasEven();
+    return this.hasEvenHelper(first)
+        || this.rest.hasEven();
   }
   
   public boolean hasEvenHelper(int num) {
@@ -62,6 +67,17 @@ class ConsLoIntegers implements ILoIntegers{
   
   public boolean hasBetweenFiveAndTenHelper(int num) {
     return num >= 5 && num <= 10;
+  }
+  
+  public boolean satisfiesCriteria() {
+    return this.satisfiesCriteriaHelper(false, false, false);
+  }
+  
+  public boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween) {
+    return this.rest.satisfiesCriteriaHelper(
+        sawEven || this.hasEvenHelper(this.first),
+        sawPosOdd || this.hasPositiveOddHelper(this.first),
+        sawBetween || this.hasBetweenFiveAndTenHelper(this.first));
   }
 }
 
@@ -90,6 +106,14 @@ class MtLoIntegers implements ILoIntegers{
   
   public boolean hasBetweenFiveAndTenHelper(int num) {
     return false;
+  }
+  
+  public boolean satisfiesCriteria() {
+    return this.satisfiesCriteriaHelper(false, false, false);
+  }
+  
+  public boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween) {
+    return sawEven && sawPosOdd && sawBetween;
   }
 }
 
@@ -142,4 +166,14 @@ class ExamplesIntegers {
         && t.checkExpect(list4.hasBetweenFiveAndTen(), false)
         && t.checkExpect(list5.hasBetweenFiveAndTen(), true);  
 }
+  
+  boolean testSatisfiesCriteria(Tester t) {
+    t.checkExpect(mt.satisfiesCriteria(), false);
+    t.checkExpect(list1.satisfiesCriteria(), false);  
+    t.checkExpect(list2.satisfiesCriteria(), false);
+    t.checkExpect(list3.satisfiesCriteria(), true);                                                           
+    t.checkExpect(list4.satisfiesCriteria(), false);  
+    t.checkExpect(list5.satisfiesCriteria(), true);
+    return true;
+  }
 }
