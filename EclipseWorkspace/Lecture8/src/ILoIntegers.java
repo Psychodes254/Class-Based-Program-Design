@@ -26,6 +26,13 @@ interface ILoIntegers {
 
  // satisfiesCriteria helper
  boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween);
+ 
+// check whether distinct elements can be assigned, one each,
+// to satisfy even / positiveOdd / between-5-and-10
+boolean satisfiesStrictCriteria();
+
+// satisfiesStrictCriteria helper
+boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween);
 }
 
 class ConsLoIntegers implements ILoIntegers{
@@ -79,6 +86,25 @@ class ConsLoIntegers implements ILoIntegers{
         sawPosOdd || this.hasPositiveOddHelper(this.first),
         sawBetween || this.hasBetweenFiveAndTenHelper(this.first));
   }
+  
+  public boolean satisfiesStrictCriteria() {
+    return this.satisfiesStrictHelper(false, false, false);
+  }
+
+  public boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween) {
+    boolean tryEven = !usedEven && this.hasEvenHelper(this.first)
+        && this.rest.satisfiesStrictHelper(true, usedPosOdd, usedBetween);
+
+    boolean tryPosOdd = !usedPosOdd && this.hasPositiveOddHelper(this.first)
+        && this.rest.satisfiesStrictHelper(usedEven, true, usedBetween);
+
+    boolean tryBetween = !usedBetween && this.hasBetweenFiveAndTenHelper(this.first)
+        && this.rest.satisfiesStrictHelper(usedEven, usedPosOdd, true);
+
+    boolean trySkip = this.rest.satisfiesStrictHelper(usedEven, usedPosOdd, usedBetween);
+
+    return tryEven || tryPosOdd || tryBetween || trySkip;
+  }
 }
 
 class MtLoIntegers implements ILoIntegers{
@@ -115,6 +141,14 @@ class MtLoIntegers implements ILoIntegers{
   public boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween) {
     return sawEven && sawPosOdd && sawBetween;
   }
+  
+  public boolean satisfiesStrictCriteria() {
+    return this.satisfiesStrictHelper(false, false, false);
+  }
+
+  public boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween) {
+    return usedEven && usedPosOdd && usedBetween;
+  }
 }
 
 class ExamplesIntegers {  
@@ -139,6 +173,15 @@ class ExamplesIntegers {
       new ConsLoIntegers(7,
           new ConsLoIntegers(8,
               new ConsLoIntegers(3, mt)));
+  
+  ILoIntegers listA = 
+      new ConsLoIntegers(6, new ConsLoIntegers(5, mt));
+
+  ILoIntegers listB = 
+      new ConsLoIntegers(6, new ConsLoIntegers(5, new ConsLoIntegers(6, mt)));
+
+  ILoIntegers listC = 
+      new ConsLoIntegers(6, new ConsLoIntegers(12, mt));
   
   boolean testHasEven(Tester t) {
     return t.checkExpect(mt.hasEven(), false)
@@ -176,4 +219,10 @@ class ExamplesIntegers {
     t.checkExpect(list5.satisfiesCriteria(), true);
     return true;
   }
+  
+  boolean testSatisfiesStrict(Tester t) {
+    return t.checkExpect(mt.satisfiesStrictCriteria(), false)
+        && t.checkExpect(listA.satisfiesStrictCriteria(), false)
+        && t.checkExpect(listB.satisfiesStrictCriteria(), true);
+}
 }
