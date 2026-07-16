@@ -20,19 +20,26 @@ interface ILoIntegers {
   // hasBetweenFiveAndTen Helper
   boolean hasBetweenFiveAndTenHelper(int num);
   
- // check whether the list has an even, a positive odd,
- // and a number between five and ten
- boolean satisfiesCriteria();
+  // check whether the list has an even, a positive odd,
+  // and a number between five and ten
+  boolean satisfiesCriteria();
 
- // satisfiesCriteria helper
- boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween);
+  // satisfiesCriteria helper
+  boolean satisfiesCriteriaHelper(boolean sawEven, boolean sawPosOdd, boolean sawBetween);
  
-// check whether distinct elements can be assigned, one each,
-// to satisfy even / positiveOdd / between-5-and-10
-boolean satisfiesStrictCriteria();
-
-// satisfiesStrictCriteria helper
-boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween);
+  // check whether distinct elements can be assigned, one each,
+  // to satisfy even / positiveOdd / between-5-and-10
+  boolean satisfiesStrictCriteria();
+  
+  // satisfiesStrictCriteria helper
+  boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween);
+  
+  // check whether EVERY element can be assigned, one each, to
+  // satisfy even / positiveOdd / between-5-and-10, with no leftovers
+  boolean satisfiesExactCriteria();
+  
+  // satisfiesExactCriteria helper
+  boolean satisfiesExactHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween);
 }
 
 class ConsLoIntegers implements ILoIntegers{
@@ -105,6 +112,23 @@ class ConsLoIntegers implements ILoIntegers{
 
     return tryEven || tryPosOdd || tryBetween || trySkip;
   }
+  
+  public boolean satisfiesExactCriteria() {
+    return this.satisfiesExactHelper(false, false, false);
+  }
+
+  public boolean satisfiesExactHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween) {
+    boolean tryEven = !usedEven && this.hasEvenHelper(this.first)
+        && this.rest.satisfiesExactHelper(true, usedPosOdd, usedBetween);
+
+    boolean tryPosOdd = !usedPosOdd && this.hasPositiveOddHelper(this.first)
+        && this.rest.satisfiesExactHelper(usedEven, true, usedBetween);
+
+    boolean tryBetween = !usedBetween && this.hasBetweenFiveAndTenHelper(this.first)
+        && this.rest.satisfiesExactHelper(usedEven, usedPosOdd, true);
+
+    return tryEven || tryPosOdd || tryBetween;
+  }
 }
 
 class MtLoIntegers implements ILoIntegers{
@@ -149,6 +173,14 @@ class MtLoIntegers implements ILoIntegers{
   public boolean satisfiesStrictHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween) {
     return usedEven && usedPosOdd && usedBetween;
   }
+  
+  public boolean satisfiesExactCriteria() {
+    return this.satisfiesExactHelper(false, false, false);
+  }
+
+  public boolean satisfiesExactHelper(boolean usedEven, boolean usedPosOdd, boolean usedBetween) {
+    return usedEven && usedPosOdd && usedBetween;
+  }
 }
 
 class ExamplesIntegers {  
@@ -174,14 +206,18 @@ class ExamplesIntegers {
           new ConsLoIntegers(8,
               new ConsLoIntegers(3, mt)));
   
-  ILoIntegers listA = 
+  ILoIntegers list6 = 
       new ConsLoIntegers(6, new ConsLoIntegers(5, mt));
 
-  ILoIntegers listB = 
+  ILoIntegers list7 = 
       new ConsLoIntegers(6, new ConsLoIntegers(5, new ConsLoIntegers(6, mt)));
 
-  ILoIntegers listC = 
-      new ConsLoIntegers(6, new ConsLoIntegers(12, mt));
+  ILoIntegers list8 =
+      new ConsLoIntegers(6, new ConsLoIntegers(5, new ConsLoIntegers(6, mt)));
+
+  ILoIntegers list9 =
+      new ConsLoIntegers(6, new ConsLoIntegers(5,
+          new ConsLoIntegers(42, new ConsLoIntegers(6, mt))));
   
   boolean testHasEven(Tester t) {
     return t.checkExpect(mt.hasEven(), false)
@@ -222,7 +258,13 @@ class ExamplesIntegers {
   
   boolean testSatisfiesStrict(Tester t) {
     return t.checkExpect(mt.satisfiesStrictCriteria(), false)
-        && t.checkExpect(listA.satisfiesStrictCriteria(), false)
-        && t.checkExpect(listB.satisfiesStrictCriteria(), true);
+        && t.checkExpect(list6.satisfiesStrictCriteria(), false)
+        && t.checkExpect(list7.satisfiesStrictCriteria(), true);
 }
+  
+  boolean testSatisfiesExact(Tester t) {
+    return t.checkExpect(mt.satisfiesExactCriteria(), false)
+        && t.checkExpect(list8.satisfiesExactCriteria(), true)
+        && t.checkExpect(list9.satisfiesExactCriteria(), false);
+  }
 }
