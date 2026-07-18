@@ -53,7 +53,7 @@ class Person{
 
 }
 
-// to represent ExamplesIMOT
+// to represent ExamplesPerson
 class ExamplesPerson{
   //examples of transportation
    IMOT diamondback = new Bicycle("Diamondback");
