@@ -5,6 +5,7 @@ interface ILog {
   double totalDist();
   ILog oneMonth(int month, int year);
   double monthDist(int month, int year);
+  double bestDist();
 }
 
 // to represent ConsLog list
@@ -34,6 +35,13 @@ class ConsLog implements ILog{
   public double monthDist(int month, int year) {
     return this.oneMonth(month, year).totalDist();
   }
+  
+  public double bestDist() {
+    if (this.first.distance > this.rest.bestDist())
+      return this.first.distance;
+    else
+      return this.rest.bestDist();
+  }
 }
 
 // to represent MtLog empty list 
@@ -49,6 +57,10 @@ class MtLog implements ILog{
   }
   
   public double monthDist(int month, int year) {
+      return 0;
+    }
+  
+  public double bestDist() {
       return 0;
     }
 }
@@ -134,5 +146,12 @@ class ExamplesRunersLog {
     return 
         t.checkExpect(mt.monthDist(5, 2026), 0.0) &&
         t.checkExpect(l4.monthDist(7, 2026), 49.0);
+  }
+  
+  // bestDist method to check all-time best distance
+  boolean testBestDist(Tester t) {
+    return 
+        t.checkExpect(mt.bestDist(), 0.0) &&
+        t.checkExpect(l4.bestDist(), 26.0);
   }
 }
