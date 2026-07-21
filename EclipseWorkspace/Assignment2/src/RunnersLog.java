@@ -4,6 +4,7 @@ import tester.*;
 interface ILog { 
   double totalDist();
   ILog oneMonth(int month, int year);
+  double monthDist(int month, int year);
 }
 
 // to represent ConsLog list
@@ -29,6 +30,10 @@ class ConsLog implements ILog{
       return
           this.rest.oneMonth(month, year);
   }
+  
+  public double monthDist(int month, int year) {
+    return this.oneMonth(month, year).totalDist();
+  }
 }
 
 // to represent MtLog empty list 
@@ -42,6 +47,10 @@ class MtLog implements ILog{
   public ILog oneMonth(int month, int year) {
     return this;
   }
+  
+  public double monthDist(int month, int year) {
+      return 0;
+    }
 }
 
 // to represent class Entry
@@ -89,15 +98,18 @@ class ExamplesRunersLog {
   Date d1 = new Date(5, 5, 2026);
   Date d2 = new Date(30, 6, 2026);
   Date d3 = new Date(20, 7, 2026);
+  Date d4 = new Date(15, 7, 2026);
   
   Entry e1 = new Entry(d1, 5.0, 25, "Good");
   Entry e2 = new Entry(d2, 3.0, 24, "Tired");
   Entry e3 = new Entry(d3, 26.0, 156, "Great");
+  Entry e4 = new Entry(d4, 23.0, 131, "Awesome");
   
   ILog mt = new MtLog();
   ILog l1 = new ConsLog(e1,mt);
   ILog l2 = new ConsLog(e2,l1);
   ILog l3 = new ConsLog(e3,l2);
+  ILog l4 = new ConsLog(e4, l3);
   
   // totalDist method to check total distance in a list
   boolean testTotalDist(Tester t) {
@@ -115,5 +127,12 @@ class ExamplesRunersLog {
         t.checkExpect(l1.oneMonth(5, 2026), l1) &&
         t.checkExpect(l2.oneMonth(5, 2026), new ConsLog(e1, mt)) &&
         t.checkExpect(l3.oneMonth(7, 2026), new ConsLog(e3,  mt));
+  }
+  
+  // montDist method to output the total distance covered in a month
+  boolean testMontDist(Tester t) {
+    return 
+        t.checkExpect(mt.monthDist(5, 2026), 0.0) &&
+        t.checkExpect(l4.monthDist(7, 2026), 49.0);
   }
 }
