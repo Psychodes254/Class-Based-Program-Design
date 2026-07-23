@@ -23,6 +23,11 @@ class Mouth{
   int length(){
   return this.river.length();
   }
+  
+  boolean withinGivenRadius(Location aloc, int radius) {
+    return this.loc.withinRadius(aloc, radius)
+        || this.river.withinGivenRadius(aloc, radius);
+  }
 }
 
 // a location on a river
@@ -41,6 +46,13 @@ class Location{
     return (this.x == aloc.x && 
            this.y == aloc.y);
   }
+  
+  boolean withinRadius(Location aloc, int radius) {
+    int dx = this.x - aloc.x;
+    int dy = this.y - aloc.y;
+
+    return dx * dx + dy * dy <= radius * radius;
+  }
 }
 
 // a river system
@@ -54,6 +66,8 @@ interface IRiver{
   //compute the total length of the
   //waterways that flow into this point
   int length();
+  
+  boolean withinGivenRadius(Location aloc, int radius);
 }
 
 // a source a river
@@ -77,6 +91,10 @@ class Sources implements IRiver{
   public int length(){
     return this.miles;
     }
+  
+  public boolean withinGivenRadius(Location aloc, int radius) {
+    return this.loc.withinRadius(aloc, radius);
+  }
 }
 
 // a confluence of two rivers
@@ -108,6 +126,12 @@ class Confluence implements IRiver{
            this.left.length() + 
            this.right.length();
     }
+  
+  public boolean withinGivenRadius(Location aloc, int radius) {
+    return this.loc.withinRadius(aloc, radius) ||
+           this.left.withinGivenRadius(aloc, radius) ||
+           this.right.withinGivenRadius(aloc, radius);
+  }
 }
 
 class ExamplesRiver {
@@ -228,5 +252,63 @@ class ExamplesRiver {
         t.checkExpect(
             this.mouth.onRiver(this.outside),
             false);
+  }
+  
+  boolean testWithinRadius(Tester t) {
+    return
+        t.checkExpect(
+            this.sourceA.withinRadius(this.sourceA, 0), true)  &&
+        t.checkExpect(
+            this.sourceA.withinRadius(this.fork1, 8), true) &&
+        t.checkExpect(
+            this.sourceA.withinRadius(this.fork1, 5), false) &&
+        t.checkExpect(
+            this.sourceA.withinRadius(this.fork1, 4), false) &&
+        t.checkExpect(
+            this.sourceA.withinRadius(this.outside, 20), false);
+  }
+  
+  boolean testSourceWithinGivenRadius(Tester t) {
+    return
+        t.checkExpect(
+            this.riverA.withinGivenRadius(this.sourceA, 0), true) &&
+        t.checkExpect(
+            this.riverA.withinGivenRadius(this.fork1, 5), false) &&
+        t.checkExpect(
+            this.riverA.withinGivenRadius(this.outside, 20), false);
+  }
+  
+  boolean testConfluenceWithinGivenRadius(Tester t) {
+    return
+        t.checkExpect(
+            this.upperRiver.withinGivenRadius(this.fork1, 0), true) &&
+        t.checkExpect(
+            this.upperRiver.withinGivenRadius(this.sourceA, 0), true) &&
+        t.checkExpect(
+            this.upperRiver.withinGivenRadius(this.sourceB, 0), true) &&
+        t.checkExpect(
+            this.upperRiver.withinGivenRadius(this.sourceC, 0), false) &&
+        t.checkExpect(
+            this.wholeRiver.withinGivenRadius(this.sourceC, 0), true) &&
+        t.checkExpect(
+            this.wholeRiver.withinGivenRadius(this.fork2, 0), true) &&
+        t.checkExpect(
+            this.wholeRiver.withinGivenRadius(new Location(14, 3, "Nearby"), 1), true) &&
+        t.checkExpect(
+            this.wholeRiver.withinGivenRadius(this.outside, 10), false);
+  }
+  
+  boolean testMouthWithinGivenRadius(Tester t) {
+    return
+        t.checkExpect(
+            this.mouth.withinGivenRadius(this.mouthLoc, 0), true) &&
+        t.checkExpect(
+            this.mouth.withinGivenRadius(this.sourceA, 0), true) &&
+        t.checkExpect(
+            this.mouth.withinGivenRadius(this.sourceB, 0), true) &&
+        t.checkExpect(
+            this.mouth.withinGivenRadius(this.sourceC, 0), true) &&
+        t.checkExpect(
+            this.mouth.withinGivenRadius(this.outside, 15), false);
   }
 }
