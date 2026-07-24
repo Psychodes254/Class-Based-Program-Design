@@ -36,6 +36,39 @@ class Mouth{
   int count() {
     return this.river.count();
   }
+  
+  ILoLocation locations() {
+    return new ConsLoLocation(this.loc, this.river.locations());
+  }
+}
+
+// to represent ILoLocation interface
+interface ILoLocation{ 
+  ILoLocation append(ILoLocation other);
+}
+
+// to represent List of String
+class ConsLoLocation  implements ILoLocation{
+  Location first;
+  ILoLocation rest;
+
+  ConsLoLocation (Location first, ILoLocation rest){
+   this.first = first;
+   this.rest = rest;
+  }
+  
+  public ILoLocation append(ILoLocation other) {
+    return new ConsLoLocation (this.first, this.rest.append(other));
+  }
+}
+
+// to represent an empty List
+class MtLoLocation implements ILoLocation{
+  MtLoLocation(){}
+  
+  public ILoLocation append(ILoLocation other) {
+    return other;
+  }
 }
 
 // a location on a river
@@ -76,6 +109,8 @@ interface IRiver{
   int maxLength();
   
   int count();
+  
+  ILoLocation locations();
 }
 
 // a source a river
@@ -110,6 +145,10 @@ class Sources implements IRiver{
   
   public int count() {
     return 0;
+  }
+  
+  public ILoLocation locations() {
+    return new ConsLoLocation(this.loc, new MtLoLocation());
   }
 }
 
@@ -163,6 +202,11 @@ class Confluence implements IRiver{
   
   public int count() {
     return 1 + ((this.left.count()) + (this.right.count()));
+  }
+  
+  public ILoLocation locations() {
+    return new ConsLoLocation(this.loc, 
+        this.left.locations().append(this.right.locations()));
   }
 }
 
@@ -358,5 +402,37 @@ class ExamplesRiver {
         t.checkExpect(this.upperRiver.count(), 1) && 
         t.checkExpect(this.wholeRiver.count(), 2) && 
         t.checkExpect(this.mouth.count(), 2);
+  }
+  
+//expected lists
+ILoLocation mt = new MtLoLocation();
+
+ILoLocation riverALocs =
+   new ConsLoLocation(this.sourceA, this.mt);
+
+ILoLocation upperRiverLocs =
+   new ConsLoLocation(this.fork1,
+       new ConsLoLocation(this.sourceA,
+           new ConsLoLocation(this.sourceB,
+               this.mt)));
+
+ILoLocation wholeRiverLocs =
+   new ConsLoLocation(this.fork2,
+       new ConsLoLocation(this.fork1,
+           new ConsLoLocation(this.sourceA,
+               new ConsLoLocation(this.sourceB,
+                   new ConsLoLocation(this.sourceC,
+                       this.mt)))));
+
+ILoLocation mouthLocs =
+   new ConsLoLocation(this.mouthLoc,
+       this.wholeRiverLocs);
+
+  boolean testLocations(Tester t) {
+    return 
+        t.checkExpect(this.riverA.locations(), this.riverALocs) &&
+        t.checkExpect(this.upperRiver.locations(), this.upperRiverLocs) && 
+        t.checkExpect(this.wholeRiver.locations(), this.wholeRiverLocs) &&
+        t.checkExpect(this.mouth.locations(), this.mouthLocs);
   }
 }
