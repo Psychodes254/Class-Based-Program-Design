@@ -32,6 +32,10 @@ class Mouth{
   int maxLength() {
     return this.river.maxLength();
   }
+  
+  int count() {
+    return this.river.count();
+  }
 }
 
 // a location on a river
@@ -61,19 +65,17 @@ class Location{
 
 // a river system
 interface IRiver{ 
-  //count the number of sources
-  //for this river system
   int sources();
   
   boolean onRiver(Location aloc);
   
-  //compute the total length of the
-  //waterways that flow into this point
   int length();
   
   boolean withinGivenRadius(Location aloc, int radius);
   
   int maxLength();
+  
+  int count();
 }
 
 // a source a river
@@ -104,6 +106,10 @@ class Sources implements IRiver{
   
   public int maxLength() {
     return this.length();
+  }
+  
+  public int count() {
+    return 0;
   }
 }
 
@@ -153,6 +159,10 @@ class Confluence implements IRiver{
     else {
       return this.miles + rightMax;
     }
+  }
+  
+  public int count() {
+    return 1 + ((this.left.count()) + (this.right.count()));
   }
 }
 
@@ -340,5 +350,13 @@ class ExamplesRiver {
         t.checkExpect(this.upperRiver.maxLength(), 12) && 
         t.checkExpect(this.wholeRiver.maxLength(), 17) && 
         t.checkExpect(this.mouth.maxLength(), 17);
+  }
+  
+  boolean testCount(Tester t) {
+    return 
+        t.checkExpect(this.riverA.count(), 0) && 
+        t.checkExpect(this.upperRiver.count(), 1) && 
+        t.checkExpect(this.wholeRiver.count(), 2) && 
+        t.checkExpect(this.mouth.count(), 2);
   }
 }
