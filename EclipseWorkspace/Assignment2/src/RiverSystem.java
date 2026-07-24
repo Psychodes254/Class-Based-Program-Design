@@ -28,6 +28,10 @@ class Mouth{
     return this.loc.withinRadius(aloc, radius)
         || this.river.withinGivenRadius(aloc, radius);
   }
+  
+  int maxLength() {
+    return this.river.maxLength();
+  }
 }
 
 // a location on a river
@@ -68,6 +72,8 @@ interface IRiver{
   int length();
   
   boolean withinGivenRadius(Location aloc, int radius);
+  
+  int maxLength();
 }
 
 // a source a river
@@ -94,6 +100,10 @@ class Sources implements IRiver{
   
   public boolean withinGivenRadius(Location aloc, int radius) {
     return this.loc.withinRadius(aloc, radius);
+  }
+  
+  public int maxLength() {
+    return this.length();
   }
 }
 
@@ -131,6 +141,18 @@ class Confluence implements IRiver{
     return this.loc.withinRadius(aloc, radius) ||
            this.left.withinGivenRadius(aloc, radius) ||
            this.right.withinGivenRadius(aloc, radius);
+  }
+  
+  public int maxLength() {
+    int leftMax = this.left.maxLength();
+    int rightMax = this.right.maxLength();
+
+    if (leftMax > rightMax) {
+      return this.miles + leftMax;
+    }
+    else {
+      return this.miles + rightMax;
+    }
   }
 }
 
@@ -310,5 +332,13 @@ class ExamplesRiver {
             this.mouth.withinGivenRadius(this.sourceC, 0), true) &&
         t.checkExpect(
             this.mouth.withinGivenRadius(this.outside, 15), false);
+  }
+  
+  boolean testMaxLength(Tester t) {
+    return
+        t.checkExpect(this.riverA.maxLength(), 8) && 
+        t.checkExpect(this.upperRiver.maxLength(), 12) && 
+        t.checkExpect(this.wholeRiver.maxLength(), 17) && 
+        t.checkExpect(this.mouth.maxLength(), 17);
   }
 }
