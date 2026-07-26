@@ -47,10 +47,16 @@ class EmbroideryPiece{
     this.name = name;
     this.motif = motif;
   }
+  
+  double averageDifficulty() {
+    return this.motif.averageDifficulty();
+  }
 }
 
 // to represent IMotif interface
-interface IMotif { }
+interface IMotif {
+  double averageDifficulty();
+}
 
 // to represent CrossStitch class 
 class CrossStitchMotif implements IMotif{
@@ -61,6 +67,10 @@ class CrossStitchMotif implements IMotif{
   CrossStitchMotif(String description, double difficulty){
     this.description = description;
     this.difficulty = difficulty;
+  }
+  
+  public double averageDifficulty() {
+    return this.difficulty;
   }
 }
 
@@ -74,6 +84,10 @@ class ChainStitchMotif implements IMotif{
     this.description = description;
     this.difficulty = difficulty;
   }
+  
+  public double averageDifficulty() {
+    return this.difficulty;
+  }
 }
 
 // to represent GroupMotif class
@@ -86,10 +100,18 @@ class GroupMotif implements IMotif{
     this.description = description;
     this.motifs = motifs;
   }
+  
+  public double averageDifficulty() {
+    return this.motifs.averageDifficulty();
+  }
 }
 
 // to represent ILoMotif interface
-interface ILoMotif{ }
+interface ILoMotif{
+  double averageDifficulty();
+  double sumDifficulty();
+  int count();
+}
 
 // to represent a list of ILoMotif
 class ConsLoMotif implements ILoMotif{
@@ -101,11 +123,35 @@ class ConsLoMotif implements ILoMotif{
     this.first = first;
     this.rest = rest;
   }
+  
+  public double averageDifficulty() {
+    return this.sumDifficulty() / this.count();
+  }
+  
+  public double sumDifficulty() {
+    return this.first.averageDifficulty() + this.rest.sumDifficulty();
+  }
+  
+  public int count() {
+    return 1 + this.rest.count();
+  }
 }
 
 // to represent an empty list ILoMotif
 class MtLoMotif implements ILoMotif{
   MtLoMotif() {}
+  
+  public double averageDifficulty() {
+    return 0.0;
+  }
+  
+  public int count() {
+    return 0;
+  }
+  
+  public double sumDifficulty() {
+    return 0.0;
+  }
 }
 
 // to represent tests and examples for ExamplesEmbroidery class
@@ -128,4 +174,12 @@ class ExamplesEmbroidery{
   IMotif nature = new GroupMotif("nature", lo2);
   
   EmbroideryPiece pillowCover = new EmbroideryPiece("Pillow Cover", nature);
+  
+  // test the averageDifficulty method
+  boolean testAverageDifficulty(Tester t) {
+    return
+    t.checkInexact(empty.averageDifficulty(), 0.0, 0.1) &&
+    t.checkInexact(lo1.averageDifficulty(), 4.3, 0.1) &&
+    t.checkInexact(lo2.averageDifficulty(), 4.1, 0.1);
+  }
 }
