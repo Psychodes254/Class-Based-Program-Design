@@ -59,6 +59,8 @@ class EmbroideryPiece{
 
 // to represent IMotif interface
 interface IMotif {
+  double sumDifficulty();
+  int count();
   double averageDifficulty();
   String embroideryInfo();
 }
@@ -75,11 +77,19 @@ class CrossStitchMotif implements IMotif{
   }
   
   public double averageDifficulty() {
-    return this.difficulty;
+    return this.sumDifficulty() / count();
   }
   
   public String embroideryInfo() {
     return this.description + " (cross stitch)";
+  }
+  
+  public double sumDifficulty() {
+    return this.difficulty;
+  }
+  
+  public int count() {
+    return 1;
   }
 }
 
@@ -95,11 +105,19 @@ class ChainStitchMotif implements IMotif{
   }
   
   public double averageDifficulty() {
-    return this.difficulty;
+    return this.sumDifficulty() / count();
   }
   
   public String embroideryInfo() {
     return this.description + " (chain stitch)";
+  }
+  
+  public double sumDifficulty() {
+    return this.difficulty;
+  }
+  
+  public int count() {
+    return 1;
   }
 }
 
@@ -120,6 +138,14 @@ class GroupMotif implements IMotif{
   
   public String embroideryInfo() {
     return this.motifs.embroideryInfo();
+  }
+  
+  public double sumDifficulty() {
+    return this.motifs.sumDifficulty();
+  }
+  
+  public int count() {
+    return this.motifs.count();
   }
 }
 
@@ -148,11 +174,11 @@ class ConsLoMotif implements ILoMotif{
   }
   
   public double sumDifficulty() {
-    return this.first.averageDifficulty() + this.rest.sumDifficulty();
+    return first.sumDifficulty() + this.rest.sumDifficulty();
   }
   
   public int count() {
-    return 1 + this.rest.count();
+    return first.count() + rest.count();
   }
   
   public String embroideryInfo() {
@@ -215,7 +241,7 @@ class ExamplesEmbroidery{
     return
     t.checkInexact(empty.averageDifficulty(), 0.0, 0.1) &&
     t.checkInexact(lo1.averageDifficulty(), 4.3, 0.1) &&
-    t.checkInexact(lo2.averageDifficulty(), 4.1, 0.1);
+    t.checkInexact(lo2.averageDifficulty(), 4.09, 0.1);
   }
   
   //test the embroideryInfo method
