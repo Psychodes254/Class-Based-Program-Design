@@ -51,11 +51,16 @@ class EmbroideryPiece{
   double averageDifficulty() {
     return this.motif.averageDifficulty();
   }
+  
+  String embroideryInfo() {
+    return this.name + ": " + this.motif.embroideryInfo() + ".";
+  }
 }
 
 // to represent IMotif interface
 interface IMotif {
   double averageDifficulty();
+  String embroideryInfo();
 }
 
 // to represent CrossStitch class 
@@ -71,6 +76,10 @@ class CrossStitchMotif implements IMotif{
   
   public double averageDifficulty() {
     return this.difficulty;
+  }
+  
+  public String embroideryInfo() {
+    return this.description + " (cross stitch)";
   }
 }
 
@@ -88,6 +97,10 @@ class ChainStitchMotif implements IMotif{
   public double averageDifficulty() {
     return this.difficulty;
   }
+  
+  public String embroideryInfo() {
+    return this.description + " (chain stitch)";
+  }
 }
 
 // to represent GroupMotif class
@@ -104,6 +117,10 @@ class GroupMotif implements IMotif{
   public double averageDifficulty() {
     return this.motifs.averageDifficulty();
   }
+  
+  public String embroideryInfo() {
+    return this.motifs.embroideryInfo();
+  }
 }
 
 // to represent ILoMotif interface
@@ -111,6 +128,8 @@ interface ILoMotif{
   double averageDifficulty();
   double sumDifficulty();
   int count();
+  String embroideryInfo();
+  String embroideryInfoRest();
 }
 
 // to represent a list of ILoMotif
@@ -135,6 +154,14 @@ class ConsLoMotif implements ILoMotif{
   public int count() {
     return 1 + this.rest.count();
   }
+  
+  public String embroideryInfo() {
+    return this.first.embroideryInfo() + this.rest.embroideryInfoRest();
+  }
+  
+  public String embroideryInfoRest() {
+    return ", " + this.first.embroideryInfo() + this.rest.embroideryInfoRest();
+  }
 }
 
 // to represent an empty list ILoMotif
@@ -151,6 +178,14 @@ class MtLoMotif implements ILoMotif{
   
   public double sumDifficulty() {
     return 0.0;
+  }
+  
+  public String embroideryInfo() {
+    return "";
+  }
+  
+  public String embroideryInfoRest() {
+    return "";
   }
 }
 
@@ -182,4 +217,12 @@ class ExamplesEmbroidery{
     t.checkInexact(lo1.averageDifficulty(), 4.3, 0.1) &&
     t.checkInexact(lo2.averageDifficulty(), 4.1, 0.1);
   }
+  
+  //test the embroideryInfo method
+   boolean testEmbroideryInfo(Tester t) {
+     return 
+     t.checkExpect(empty.embroideryInfo(), "") &&
+     t.checkExpect(pillowCover.embroideryInfo(), 
+     "Pillow Cover: bird (cross stitch), tree (chain stitch), rose (cross stitch), poppy (chain stitch), daisy (cross stitch).");
+ }
 }
