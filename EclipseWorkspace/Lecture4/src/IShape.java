@@ -36,7 +36,7 @@ import tester.*;
  | +----------------------------+  +----------------------------+  +----------------------------+  +----------------------------+ 
  | | Circle                     |  | Square                     |  | Triangle                   |  | Rectangle                  | 
  | +----------------------------+  +----------------------------+  +----------------------------+  +----------------------------+ 
- | int radius                 |  | int size                   |  | int base                   |  | int height                 | 
+ | int radius                   |  | int size                   |  | int base                   |  | int height                 | 
  | |                            |  |                            |  | int height                 |  | int base                   | 
  | +----------------------------+  +----------------------------+  +----------------------------+  +----------------------------+ 
  | | IShape grow(int)           |  | IShape grow(int)           |  | IShape grow(int)           |  | IShape grow(int)           | 
@@ -141,20 +141,30 @@ class Square extends Rectangle {
     
     // to increase the size of this shape by the given increment
     public IShape grow(int inc){
-        return new Square(this.nw, this.width + inc, this.color);
+        return new Square(this.location, this.base + inc, this.color);
     }
 }
 
 // to represent a triangle
-class Triangle extends Rectangle {
+class Triangle extends AShape {
+    int base;
+    int height;
+  
+    // the constructor
     Triangle(CartPt location, int base, int height, String color) {
-        super(location, base, height, color)
+        super(location, color);
+        this.base = base;
+        this.height = height;
     }
 
     // to compute the area of this shape
-    @Override
     public double area() {
         return (this.base * this.height) / 2.0;
+    }
+    
+    // to increase the size of this shape by the given increment
+    public IShape grow(int inc) {
+        return new Triangle(this.location, this.base + inc, this.height + inc, this.color);
     }
 
     // does this shape (including the boundary) contain the given point?
@@ -169,8 +179,8 @@ class Rectangle extends AShape {
     int base;   
     int height;
 
-    Rectangle(int base, int height) {
-        super(location, color)
+    Rectangle(CartPt location, int base, int height, String color) {
+        super(location, color);
         this.base = base;
         this.height = height;
     }
@@ -478,6 +488,5 @@ class ExamplesShapes {
         t.checkExpect(this.combo1.contains(new CartPt(55, 55)), true)  &&
         t.checkExpect(this.combo1.contains(new CartPt(45, 53)), true)  &&
         t.checkExpect(this.combo1.contains(new CartPt(100, 100)), false);
-}
-
+    }
 }
