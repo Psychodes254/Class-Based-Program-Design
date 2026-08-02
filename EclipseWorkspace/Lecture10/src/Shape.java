@@ -7,17 +7,11 @@ interface IShape{
   boolean sameRectangle(Rectangle other);
   boolean sameSquare2(Square2 other);
   boolean sameTriangle(Triangle other);
+  boolean sameCombo(Combo that);
 }
 
 // to represent abstract class AShape
-abstract class AShape implements IShape{
-  int x, y;
-  
-  AShape(int x, int y){
-    this.x = x;
-    this.y = y;
-  }
-  
+abstract class AShape implements IShape{    
   public boolean sameCircle(Circle other) {
     return false;
   }
@@ -33,14 +27,21 @@ abstract class AShape implements IShape{
   public boolean sameTriangle(Triangle other) {
     return false;
   }
+  
+  public boolean sameCombo(Combo that) { 
+    return false;
+  }
+
 }
 
 // to represent Circle class
 class Circle extends AShape{
+  int x, y;
   int radius;
   
   Circle(int x, int y, int radius){
-    super(x, y);
+    this.x = x;
+    this.y = y;
     this.radius = radius;
   }
   
@@ -60,11 +61,13 @@ class Circle extends AShape{
 
 // to represent Rectangle class
 class Rectangle extends AShape{
+  int x, y;
   int width;
   int length;
   
   Rectangle(int x, int y, int width, int length){
-    super(x, y);
+    this.x = x;
+    this.y = y;
     this.width = width;
     this.length = length;
   }
@@ -110,11 +113,11 @@ class Square2 extends Rectangle{
 
 // to represent Triangle class
 class Triangle extends AShape{
+  int x, y;
   int base;
   int height;
   
   Triangle(int x, int y, int base, int height){
-    super(x, y);
     this.base = base;
     this.height = height;
   }
@@ -131,6 +134,26 @@ class Triangle extends AShape{
       return true;
     else
       return false;
+  }
+}
+
+// to represent sameCombo class
+class Combo extends AShape{
+  IShape left;
+  IShape right;
+  
+  Combo(IShape left, IShape right){
+    this.left = left;
+    this.right = right; 
+  }
+  
+  public boolean sameShape(IShape that) {
+    return that.sameCombo(this);
+    }
+  
+  public boolean sameCombo(Combo that) {
+    return this.left.sameShape(that.left) &&
+           this.right.sameShape(that.right);
   }
 }
 
@@ -151,6 +174,10 @@ class ExamplesShape{
   
   IShape t1 = new Triangle(3, 4, 5, 6);
   IShape t2 = new Triangle(3, 4, 5, 6);
+  
+  IShape combo1 = new Combo(c1, r1);
+  IShape combo2 = new Combo(c1, s1);
+  IShape combo3 = new Combo(c1, t1);
   
   boolean testerSameness(Tester t) {
     return
@@ -181,7 +208,11 @@ class ExamplesShape{
     t.checkExpect(s1.sameShape(t1), false) &&
     
     t.checkExpect(t1.sameShape(t2), true) &&
-    t.checkExpect(t2.sameShape(t1), true);
+    t.checkExpect(t2.sameShape(t1), true) &&
+    
+    t.checkExpect(combo1.sameShape(combo2), false) &&
+    t.checkExpect(combo2.sameShape(combo3), false) &&
+    t.checkExpect(combo1.sameShape(combo1), true);
   }
 }
 
