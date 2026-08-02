@@ -2,40 +2,24 @@ import tester.*;
 
 // to represent IShape interface
 interface IShape{ 
+  boolean sameShape(IShape other);
   boolean sameCircle(Circle other);
   boolean sameRectangle(Rectangle other);
   boolean sameSquare2(Square2 other);
-  boolean sameShape(IShape other);
-  boolean isCircle();
-  boolean isRectangle();
-  boolean isSquare2();
+  boolean sameTriangle(Triangle other);
 }
 
-// to represent Circle class
-class Circle implements IShape{
+// to represent abstract class AShape
+abstract class AShape implements IShape{
   int x, y;
-  int radius;
   
-  Circle(int x, int y, int radius){
+  AShape(int x, int y){
     this.x = x;
     this.y = y;
-    this.radius = radius;
-  }
-  
-  public boolean sameShape(IShape other) {
-    if (other.isCircle())
-      return this.sameCircle((Circle) other);
-    else
-      return false;
   }
   
   public boolean sameCircle(Circle other) {
-    if (this.x == other.x &&
-        this.y == other.y &&
-        this.radius == other.radius)
-      return true;
-    else
-      return false;
+    return false;
   }
   
   public boolean sameRectangle(Rectangle other) {
@@ -46,35 +30,47 @@ class Circle implements IShape{
     return false;
   }
   
-  public boolean isCircle() {
-    return true;
-  }
-  public boolean isRectangle() {
-    return false;
-  }
-  public boolean isSquare2() {
+  public boolean sameTriangle(Triangle other) {
     return false;
   }
 }
 
+// to represent Circle class
+class Circle extends AShape{
+  int radius;
+  
+  Circle(int x, int y, int radius){
+    super(x, y);
+    this.radius = radius;
+  }
+  
+  public boolean sameShape(IShape other) {
+    return other.sameCircle(this);
+  }
+  
+  public boolean sameCircle(Circle other) {
+    if (this.x == other.x &&
+        this.y == other.y &&
+        this.radius == other.radius)
+      return true;
+    else
+      return false;
+  }
+}
+
 // to represent Rectangle class
-class Rectangle implements IShape{
-  int x, y;
+class Rectangle extends AShape{
   int width;
   int length;
   
   Rectangle(int x, int y, int width, int length){
-    this.x = x;
-    this.y = y;
+    super(x, y);
     this.width = width;
     this.length = length;
   }
   
   public boolean sameShape(IShape other) {
-    if (other.isRectangle())
-      return this.sameRectangle((Rectangle) other);
-    else
-      return false;
+    return other.sameRectangle(this);
   }
   
   public boolean sameRectangle(Rectangle other) {
@@ -86,26 +82,6 @@ class Rectangle implements IShape{
     else
       return false;
   }
-  
-  public boolean sameCircle(Circle other) {
-    return false;
-  }
-  
-  public boolean sameSquare2(Square2 other) {
-    return false;
-  }
-  
-  public boolean isCircle() {
-    return false;
-  }
-  
-  public boolean isRectangle() {
-    return true;
-  }
-  
-  public boolean isSquare2() {
-    return false;
-  }
 }
 
 // to represent Square class
@@ -115,10 +91,7 @@ class Square2 extends Rectangle{
   }
   
   public boolean sameShape(IShape other) {
-    if (other.isSquare2())
-      return this.sameSquare2((Square2) other);
-    else
-      return false;
+    return other.sameSquare2(this);
   }
   
   public boolean sameSquare2(Square2 other) {
@@ -130,24 +103,34 @@ class Square2 extends Rectangle{
       return false;
   }
   
-  public boolean sameCircle(Circle other) {
-    return false;
-  }
-  
   public boolean sameRectangle(Rectangle other) {
     return false;
   }
+}
+
+// to represent Triangle class
+class Triangle extends AShape{
+  int base;
+  int height;
   
-  public boolean isCircle() {
-    return false;
+  Triangle(int x, int y, int base, int height){
+    super(x, y);
+    this.base = base;
+    this.height = height;
   }
   
-  public boolean isRectangle() {
-    return false;
+  public boolean sameShape(IShape other) {
+    return other.sameTriangle(this);
   }
   
-  public boolean isSquare2() {
-    return true;
+  public boolean sameTriangle(Triangle other) {
+    if (this.x == other.x &&
+        this.y == other.y &&
+        this.base == other.base &&
+        this.height == other.height)
+      return true;
+    else
+      return false;
   }
 }
 
@@ -165,6 +148,9 @@ class ExamplesShape{
   IShape s1 = new Square2(3, 4, 5);
   IShape s2 = new Square2(4, 5, 6);
   IShape s3 = new Square2(3, 4, 5);
+  
+  IShape t1 = new Triangle(3, 4, 5, 6);
+  IShape t2 = new Triangle(3, 4, 5, 6);
   
   boolean testerSameness(Tester t) {
     return
@@ -184,7 +170,18 @@ class ExamplesShape{
     t.checkExpect(s3.sameShape(s1), true) &&
     
     t.checkExpect(s1.sameShape(r1), false) &&
-    t.checkExpect(r1.sameShape(s1), false);
+    t.checkExpect(r1.sameShape(s1), false) &&
+    
+    t.checkExpect(t1.sameShape(c1), false) &&
+    t.checkExpect(t1.sameShape(r1), false) &&
+    t.checkExpect(t1.sameShape(s1), false) &&
+    
+    t.checkExpect(c1.sameShape(t1), false) &&
+    t.checkExpect(r1.sameShape(t1), false) &&
+    t.checkExpect(s1.sameShape(t1), false) &&
+    
+    t.checkExpect(t1.sameShape(t2), true) &&
+    t.checkExpect(t2.sameShape(t1), true);
   }
 }
 
