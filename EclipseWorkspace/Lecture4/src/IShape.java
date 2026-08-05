@@ -1,14 +1,16 @@
 import tester.*;
 /*
-                                                  +----------------------------+                    
-                                                  | IShape                     |                    
-                                                  +----------------------------+                    
-                                                  | double area()              |                    
-                                                  | double distToOrigin()      |                    
-                                                  | IShape grow(int)           |                    
-                                                  | boolean biggerThan(IShape) |                    
-                                                  | boolean contains(CartPt)   |                    
-                                                  +----------------------------+                    
+                                                  +--------------------------------+                    
+                                                  | IShape                         |                    
+                                                  +--------------------------------+                    
+                                                  | double area()                  |                    
+                                                  | double distToOrigin()          |                    
+                                                  | IShape grow(int)               |                    
+                                                  | boolean biggerThan(IShape)     |                    
+                                                  | boolean contains(CartPt)       | 
+                                                  | boolean sameSize(IShape other) |
+                                                  | boolean closerTo(IShape other) |                   
+                                                  +--------------------------------+                    
                                                                   |                                    
                                                                  / \                                   
                                                                  ---                                   
@@ -26,6 +28,8 @@ import tester.*;
  |                  | abstract IShape grow()            |                 | IShape grow()              |
  |                  | boolean biggerThan(IShape)        |                 | biggerThan()               |
  |                  | abstract boolean contains(CartPt) |                 | contains()                 |
+ |                  | boolean sameSize(IShape that)     |                 |                            |
+ |                  | boolean closerTo(IShape that)     |                 |                            |
  |                  +-----------------------------------+                 +----------------------------+
  |                                     |                                                  |
  |                                     +--------------------------------------------------+
@@ -73,6 +77,9 @@ interface IShape {
     
     // does this shape (including the boundary) contain the given point?
     boolean contains(CartPt pt);
+    
+    // determine if the shape is of equal size as some other
+    boolean sameSize(IShape that);
 }
 
 // to represent an abstract class AShape
@@ -94,6 +101,11 @@ abstract class AShape implements IShape {
     // to compute the distance form this shape to the origin
     public double distToOrigin(){
         return this.location.distToOrigin();
+    }
+    
+    // to compute the same area of two shapes
+    public boolean sameSize(IShape that) {
+      return this.area() == that.area();
     }
 
     public abstract double area();
@@ -237,6 +249,12 @@ class Combo implements IShape {
     public boolean contains(CartPt pt) {
         return this.first.contains(pt) || this.second.contains(pt);
     }
+    
+    // determine if the two shape are equal from each other
+    public boolean sameSize(IShape other) {
+      return this.first.area() == other.area() &&
+          this.second.area() == other.area();
+    }
 }
 
 /*
@@ -285,18 +303,30 @@ class ExamplesShapes {
     IShape s1 = new Square(new CartPt(50, 50), 30, "red");
     IShape s2 = new Square(new CartPt(50, 50), 50, "red");
     IShape s3 = new Square(new CartPt(20, 40), 10, "green");
+    IShape s4 = new Square(new CartPt(42, 30), 30, "maroon");
+    IShape s5 = new Square(new CartPt(20, 60), 10, "orange");
+    IShape s6 = new Square(new CartPt(15, 25), 20, "cream");
 
     IShape t1 = new Triangle(new CartPt(50, 50), 10, 5, "red");
     IShape t2 = new Triangle(new CartPt(50, 50), 30, 10, "blue");
     IShape t3 = new Triangle(new CartPt(25, 75), 30, 10, "green");
+    IShape t4 = new Triangle(new CartPt(30, 80), 25, 8, "black");
+    IShape t5 = new Triangle(new CartPt(35, 85), 80, 10, "grey");
 
     IShape r1 = new Rectangle(new CartPt(50, 50), 20, 10, "red");
     IShape r2 = new Rectangle(new CartPt(50, 50), 40, 20, "blue");
     IShape r3 = new Rectangle(new CartPt(50, 50), 50, 80, "yellow");
+    IShape r4 = new Rectangle(new CartPt(60, 70), 40, 20, "purple");
+    IShape r5 = new Rectangle(new CartPt(40, 40), 20, 5, "white");
+    IShape r6 = new Rectangle(new CartPt(55, 65), 80, 5, "pink");
 
     IShape combo1 = new Combo(c1, t1);
     IShape combo2 = new Combo(s1, r1);
     IShape combo3 = new Combo(c2, s3);
+    
+    IShape combo4 = new Combo(s5, t4);
+    IShape combo5 = new Combo(c2, c3);
+    IShape combo6 = new Combo(s6, r6);
     
     // test the method distToOrigin in the class CartPt
     boolean testDistToOrigin(Tester t) { 
@@ -488,5 +518,28 @@ class ExamplesShapes {
         t.checkExpect(this.combo1.contains(new CartPt(55, 55)), true)  &&
         t.checkExpect(this.combo1.contains(new CartPt(45, 53)), true)  &&
         t.checkExpect(this.combo1.contains(new CartPt(100, 100)), false);
+    }
+    
+    // test the method sameSize
+    boolean testSameSize(Tester t) {
+      return 
+      t.checkExpect(this.c1.sameSize(c2), false) &&
+      t.checkExpect(this.c2.sameSize(c3), true) &&
+      
+      t.checkExpect(this.s2.sameSize(s3), false) &&
+      t.checkExpect(this.s1.sameSize(s4), true) &&
+      
+      t.checkExpect(this.t1.sameSize(t3), false) &&
+      t.checkExpect(this.t3.sameSize(t2), true) &&
+      
+      t.checkExpect(this.r3.sameSize(r1), false) &&
+      t.checkExpect(this.r2.sameSize(r4), true) &&
+      
+      t.checkExpect(this.combo1.sameSize(c2), false) &&
+      t.checkExpect(this.combo2.sameSize(s2), false) &&
+      t.checkExpect(this.combo3.sameSize(c1), false) &&
+      t.checkExpect(this.combo4.sameSize(r5), true) &&
+      t.checkExpect(this.combo5.sameSize(c2), true) &&
+      t.checkExpect(this.combo6.sameSize(t5), true);
     }
 }
