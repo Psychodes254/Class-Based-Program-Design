@@ -9,7 +9,7 @@ import tester.*;
                                                   | boolean biggerThan(IShape)     |                    
                                                   | boolean contains(CartPt)       | 
                                                   | boolean sameSize(IShape other) |
-                                                  | boolean closerTo(IShape other) |                   
+                                                  | IShape closerTo(IShape other)  |                   
                                                   +--------------------------------+                    
                                                                   |                                    
                                                                  / \                                   
@@ -80,6 +80,9 @@ interface IShape {
     
     // determine if the shape is of equal size as some other
     boolean sameSize(IShape that);
+    
+    // determine which shape is closer to the origin 
+    IShape closerTo(IShape other);
 }
 
 // to represent an abstract class AShape
@@ -106,6 +109,14 @@ abstract class AShape implements IShape {
     // to compute the same area of two shapes
     public boolean sameSize(IShape that) {
       return this.area() == that.area();
+    }
+    
+    // to compute the shape that is closer to the origin
+    public IShape closerTo(IShape other) {
+      if (this.distToOrigin() <= other.distToOrigin())
+        return this;
+      else
+        return other;
     }
 
     public abstract double area();
@@ -255,6 +266,14 @@ class Combo implements IShape {
       return this.first.area() == other.area() &&
           this.second.area() == other.area();
     }
+    
+    // compute if the two shapes are closer to the origin than the given one
+    public IShape closerTo(IShape other) {
+      if (this.distToOrigin() <= other.distToOrigin())
+        return this;
+      else
+        return other;
+    }
 }
 
 /*
@@ -361,7 +380,7 @@ class ExamplesShapes {
         t.checkInexact(this.c3.distToOrigin(), 74.40, 0.01);
     }
     
-    // test the method distTo in the class Circle
+    // test the method distTo in the class Square
     boolean testSquareDistToOrigin(Tester t) { 
         return
         t.checkInexact(this.s1.distToOrigin(), 70.71, 0.01) &&
@@ -541,5 +560,15 @@ class ExamplesShapes {
       t.checkExpect(this.combo4.sameSize(r5), true) &&
       t.checkExpect(this.combo5.sameSize(c2), true) &&
       t.checkExpect(this.combo6.sameSize(t5), true);
+    }
+    
+    // test the method closerTo
+    boolean testCloserTo(Tester t) {
+      return 
+      t.checkExpect(this.c1.closerTo(c3), c1) &&
+      t.checkExpect(this.s1.closerTo(s3), s3) &&
+      t.checkExpect(this.t3.closerTo(t1), t1) &&
+      t.checkExpect(this.r1.closerTo(r3), r1) &&
+      t.checkExpect(this.combo1.closerTo(combo2), combo1);
     }
 }
