@@ -5,6 +5,7 @@ interface ILin {
   int howMany(int i);
   boolean in(int i);
   int count();
+  ILin removeDuplicates();
 }
 
 // a list of integers constructor
@@ -31,6 +32,15 @@ class Cin implements ILin{
   public int count() {
     return 1 + this.rest.count();
   }
+  
+  public ILin removeDuplicates() {
+    ILin restRemove = this.rest.removeDuplicates();
+    if (restRemove.in(first)) {
+      return restRemove;
+    }
+    else
+      return new Cin(this.first, restRemove);
+  }
 }
 
 // an empty list of integers
@@ -47,6 +57,10 @@ class MTin implements ILin{
   
   public boolean in(int i) {
     return false;
+  }
+  
+  public ILin removeDuplicates() {
+    return this;
   }
 }
 
@@ -70,6 +84,8 @@ abstract class ICollection implements ILin{
   public int count() {
     return this.elements.count();
   }
+  
+  public abstract ILin removeDuplicates();
 }
 
 // to represent a set of integers class
@@ -87,6 +103,10 @@ class Set extends ICollection {
       return new Set(new Cin(i,this.elements));
     }
   }
+  
+  public ILin removeDuplicates() {
+    return new Set(this.elements.removeDuplicates());
+  }
 }
 
 // to represent bag of integers class a bag of integers
@@ -99,6 +119,10 @@ class Bag extends ICollection {
   Bag add(int i) {
     return new Bag(new Cin(i,this.elements));
   }
+  
+  public ILin removeDuplicates() {
+    return new Bag(this.elements.removeDuplicates());
+  }
 }
 
 // to represent ExamplesIntegers class
@@ -107,7 +131,6 @@ class ExamplesIntegers{
   
   ILin list1 = new Cin(1, new Cin(2, new Cin(3, new Cin(4, new Cin(5, new MTin())))));
   ILin list2 = new Cin(6, new Cin(7, new Cin(8, new Cin(9, new Cin(10, new MTin())))));
-  ILin list3 = new Cin(13, new Cin(18, new Cin(21, new Cin(24, new Cin(39, new MTin())))));
   
   //a set built from list1 — note list1 has no duplicates, so this is a valid set
   Set set1 = new Set(list1);
@@ -115,6 +138,10 @@ class ExamplesIntegers{
   
   Bag bag1 = new Bag(list1);
   Bag emptyBag = new Bag(new MTin());
+  
+  Bag messyBag = new Bag(new Cin(3, new Cin(3, new Cin(5, new Cin(3, new MTin())))));
+  
+  ILin cleanBag = messyBag.removeDuplicates();
 
   // ILin tests 
 
@@ -185,18 +212,12 @@ class ExamplesIntegers{
     return t.checkExpect(result.count(), 6)
         && t.checkExpect(result.in(100), true);
   }
+  
+  // test the removeDuplicates method
+  boolean testRemoveDuplicates(Tester t) {
+    return
+        t.checkExpect(cleanBag.count(), 2) &&
+        t.checkExpect(cleanBag.howMany(3), 1) &&
+        t.checkExpect(cleanBag.howMany(5), 1);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
