@@ -3,6 +3,10 @@ import tester.*;
 // to represent ILoRunner interface
 interface ILoRunner{
     ILoRunner find(IRunnerPredicate predicate);
+    ILoRunner sortBy(IRunnerComparator comp);
+    ILoRunner insertBy(IRunnerComparator comp, Runner r);
+    Runner findMin(IRunnerComparator comp);
+    Runner findMinHelper(IRunnerComparator comp, Runner currentMinRunner);
 }
 
 // to represent MtLoRunner class
@@ -11,6 +15,22 @@ class MtLoRunner implements ILoRunner{
 
     public ILoRunner find(IRunnerPredicate predicate){
         return new MtLoRunner();
+    }
+
+    public ILoRunner sortBy(IRunnerComparator comp){
+        return this;
+    }
+
+    public ILoRunner insertBy(IRunnerComparator comp, Runner r){
+        return new ConsLoRunner(r, this);
+    }
+
+    public Runner findMin(IRunnerComparator comp){
+        throw new RuntimeException("No winner of minimum list of Runners!");
+    }
+
+    public Runner findMinHelper(IRunnerComparator comp, Runner currentMinRunner){
+        return currentMinRunner;
     }
 }
 
@@ -30,6 +50,32 @@ class ConsLoRunner implements ILoRunner{
         }
         else{
             return this.rest.find(predicate);
+        }
+    }
+
+    public ILoRunner sortBy(IRunnerComparator comp){
+        return this.rest.sortBy(comp).insertBy(comp, this.first);
+    }
+
+    public ILoRunner insertBy(IRunnerComparator comp, Runner r){
+        if (comp.compare(this.first, r) < 0){
+            return new ConsLoRunner(this.first, this.rest.insertBy(comp, r));
+        }
+        else{
+            return new ConsLoRunner(r, this);
+        }
+    }
+
+    public Runner findMin(IRunnerComparator comp){
+        return this.rest.findMinHelper(comp, this.first);
+    }
+
+    public Runner findMinHelper(IRunnerComparator comp, Runner currentMinRunner){
+        if (comp.compare(this.first, currentMinRunner) < 0){
+            return this.rest.findMinHelper(comp, this.first);
+        }
+        else{
+            return this.rest.findMinHelper(comp, currentMinRunner);
         }
     }
 }
@@ -80,6 +126,16 @@ class ExamplesBostonMarathon {
     ILoRunner isMaleUnderAge40 = new ConsLoRunner(this.frank,
                                  new ConsLoRunner(this.bill, new MtLoRunner()));
 
+    ILoRunner sortedByTime = new ConsLoRunner(this.bill,
+                            new ConsLoRunner(this.frank,
+                            new ConsLoRunner(this.joan,
+                            new ConsLoRunner(this.johnny, new MtLoRunner()))));
+
+    ILoRunner sortedByAge = new ConsLoRunner(this.joan,
+                            new ConsLoRunner(this.frank,
+                            new ConsLoRunner(this.bill,
+                            new ConsLoRunner(this.johnny, new MtLoRunner()))));
+
     boolean testFindMethods(Tester t) {
         return
         t.checkExpect(this.list2.find(new RunnerIsFemale()), femalRunners) &&
@@ -87,5 +143,18 @@ class ExamplesBostonMarathon {
         t.checkExpect(this.list2.find(new RunnerIsInFirst50()), posUnder50Runners) &&
         t.checkExpect(this.list2.find(new AndPredicate(new RunnerIsMale(), new RunnerIsInFirst50())), isMaleUnder50) &&
         t.checkExpect(this.list2.find(new AndPredicate(new RunnerIsMale(), new UnderAge40())), isMaleUnderAge40);
+    }
+
+    boolean testSortByTime(Tester t){
+        return
+        t.checkExpect(this.list2.sortBy(new CompareByTime()), sortedByTime) &&
+        t.checkExpect(this.list2.sortBy(new CompareByAge()), sortedByAge);
+    }
+
+    boolean testFindWinners(Tester t){
+        return 
+        t.checkExpect(this.list2.findMin(new CompareByTime()), bill) &&
+        t.checkExpect(this.list2.findMin(new CompareByAge()), joan) &&
+        t.checkExpect(this.list2.findMin(new CompareByPosition()), joan);
     }
 }
