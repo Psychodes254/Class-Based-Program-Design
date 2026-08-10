@@ -7,6 +7,7 @@ interface ILoRunner{
     ILoRunner insertBy(IRunnerComparator comp, Runner r);
     Runner findMin(IRunnerComparator comp);
     Runner findMinHelper(IRunnerComparator comp, Runner currentMinRunner);
+    Runner findMax(IRunnerComparator comp);
 }
 
 // to represent MtLoRunner class
@@ -31,6 +32,10 @@ class MtLoRunner implements ILoRunner{
 
     public Runner findMinHelper(IRunnerComparator comp, Runner currentMinRunner){
         return currentMinRunner;
+    }
+
+    public Runner findMax(IRunnerComparator comp){
+        throw new RuntimeException("No winner of maximum list of Runners");
     }
 }
 
@@ -77,6 +82,10 @@ class ConsLoRunner implements ILoRunner{
         else{
             return this.rest.findMinHelper(comp, currentMinRunner);
         }
+    }
+
+    public Runner findMax(IRunnerComparator comp){
+        return this.findMin(new ReverseComparator(comp));
     }
 }
 
@@ -136,6 +145,26 @@ class ExamplesBostonMarathon {
                             new ConsLoRunner(this.bill,
                             new ConsLoRunner(this.johnny, new MtLoRunner()))));
 
+    ILoRunner sortByName = new ConsLoRunner(this.joan,
+                           new ConsLoRunner(this.johnny,
+                           new ConsLoRunner(this.bill,
+                           new ConsLoRunner(this.frank, new MtLoRunner()))));
+
+    ILoRunner reversedSortedByTime = new ConsLoRunner(this.johnny,
+                                     new ConsLoRunner(this.joan,
+                                     new ConsLoRunner(this.frank,
+                                     new ConsLoRunner(this.bill, new MtLoRunner()))));
+
+    ILoRunner reversedSortedByAge = new ConsLoRunner(this.johnny,
+                                    new ConsLoRunner(this.bill,
+                                    new ConsLoRunner(this.frank,
+                                    new ConsLoRunner(this.joan, new MtLoRunner()))));
+
+    ILoRunner reversedSortByName = new ConsLoRunner(this.frank,
+                                   new ConsLoRunner(this.bill,
+                                   new ConsLoRunner(this.johnny,
+                                   new ConsLoRunner(this.joan, new MtLoRunner()))));
+
     boolean testFindMethods(Tester t) {
         return
         t.checkExpect(this.list2.find(new RunnerIsFemale()), femalRunners) &&
@@ -148,13 +177,30 @@ class ExamplesBostonMarathon {
     boolean testSortByTime(Tester t){
         return
         t.checkExpect(this.list2.sortBy(new CompareByTime()), sortedByTime) &&
-        t.checkExpect(this.list2.sortBy(new CompareByAge()), sortedByAge);
+        t.checkExpect(this.list2.sortBy(new CompareByAge()), sortedByAge) &&
+        t.checkExpect(this.list2.sortBy(new CompareByName()), sortByName);
     }
 
     boolean testFindWinners(Tester t){
         return 
         t.checkExpect(this.list2.findMin(new CompareByTime()), bill) &&
         t.checkExpect(this.list2.findMin(new CompareByAge()), joan) &&
-        t.checkExpect(this.list2.findMin(new CompareByPosition()), joan);
+        t.checkExpect(this.list2.findMin(new CompareByPosition()), joan) &&
+        t.checkExpect(this.list2.findMin(new CompareByName()), joan);
+    }
+
+    boolean testReverseComparator(Tester t){
+        return 
+        t.checkExpect(this.list2.sortBy(new ReverseComparator(new CompareByTime())), reversedSortedByTime) &&
+        t.checkExpect(this.list2.sortBy(new ReverseComparator(new CompareByAge())), reversedSortedByAge) &&
+        t.checkExpect(this.list2.sortBy(new ReverseComparator(new CompareByName())), reversedSortByName);
+    }
+
+    boolean testReverseFindWinners(Tester t){
+        return
+        t.checkExpect(this.list2.findMax(new CompareByTime()), johnny) &&
+        t.checkExpect(this.list2.findMax(new CompareByAge()), johnny) &&
+        t.checkExpect(this.list2.findMax(new CompareByPosition()), frank) &&
+        t.checkExpect(this.list2.findMax(new CompareByName()), frank);
     }
 }
