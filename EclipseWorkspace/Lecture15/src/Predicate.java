@@ -3,9 +3,28 @@ interface IPredicate<T>{
     boolean apply(T t);
 }
 
-// to represent IFunction interface
-interface IFunction<T, R>{
-  R apply(T arg);
+// to represent IFunction interface having a return type as a parameter
+interface IFunction<A, R>{
+  R apply(A arg);
+}
+
+// to represent IFunction2 interface consisting of two arguments
+interface IFunction2<A1, A2, R>{
+  R apply(A1 arg1, A2 arg2);
+}
+
+// to represent class TotalRunnersAge to return the total age in a list
+class TotalRunnersAge implements IFunction2<Runner, Integer, Integer>{
+  public Integer apply(Runner r, Integer sum){
+    return r.age + sum;
+  }
+}
+
+// to represent class TotalPriceBook
+class TotalPriceBook implements IFunction2<Book, Double, Double>{
+  public Double apply(Book b, Double total){
+    return b.price + total;
+  }
 }
 
 // to represent RunnerName class 
