@@ -3,12 +3,17 @@ import tester.*;
 // to represent IList interface
 interface IList<T>{
     IList<T> find(IPredicate<T> predicate);
+    <U> IList<U> map(IFunction<T, U> function);
 }
 
 // to represent an empty list of IList
 class MtList<T> implements IList<T>{
     public IList<T> find(IPredicate<T> predicate){
         return new MtList<T>();
+    }
+    
+    public <U> IList<U> map(IFunction<T, U> function){
+      return new MtList<U>();
     }
 }
 
@@ -29,6 +34,10 @@ class ConsList<T> implements IList<T>{
         else{
             return this.rest.find(predicate);
         }
+    }
+    
+    public <U> IList<U> map(IFunction<T, U> function){
+      return new ConsList<U>(function.apply(this.first), this.rest.map(function));
     }
 }
 
@@ -52,9 +61,9 @@ class ExamplesIList{
                                new MtList<Runner>()))));
 
     IList<Book> bookList = new ConsList<Book>(this.book1,
-                               new ConsList<Book>(this.book2, 
-                               new ConsList<Book>(this.book3,
-                               new MtList<Book>())));
+                           new ConsList<Book>(this.book2, 
+                           new ConsList<Book>(this.book3,
+                           new MtList<Book>())));
 
     IList<Runner> under50Pos = new ConsList<Runner>(this.johnny,
                                new ConsList<Runner>(this.joan,
@@ -62,11 +71,28 @@ class ExamplesIList{
 
     IPredicate<Book> bookByAuthor = new BookByAuthor();
     IPredicate<Runner> runnerUnder50 = new PosUnder50();
+    
+    IList<String> runnerByName = new ConsList<String>("Kelly",
+                                 new ConsList<String>("Shorter", 
+                                 new ConsList<String>("Rogers",
+                                 new ConsList<String>("Benoit",
+                                 new MtList<String>()))));
+    
+    IList<Integer> bookByYear = new ConsList<Integer>(1998,
+                                new ConsList<Integer>(2014, 
+                                new ConsList<Integer>(2001,
+                                new MtList<Integer>())));
 
     boolean testFind(Tester t){
         return
         t.checkExpect(this.bookList.find(this.bookByAuthor), 
                       new ConsList<Book>(book1, new MtList<Book>())) &&
         t.checkExpect(this.runnerList.find(this.runnerUnder50), under50Pos);
+    }
+    
+    boolean testMap(Tester t) {
+      return
+      t.checkExpect(this.runnerList.map(new RunnerName()), runnerByName) &&
+      t.checkExpect(this.bookList.map(new BookByYear()), bookByYear);
     }
 }
