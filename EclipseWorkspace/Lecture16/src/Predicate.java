@@ -13,79 +13,82 @@ interface IFunction2<A1, A2, R>{
   R apply(A1 arg1, A2 arg2);
 }
 
-// to represent predicate classes functions
-class CircleColor implements IPredicate<Circle>{
-  public boolean apply(Circle c) {
-    return c.color.equals("blue");
+// to represent IVisitorShape interface
+interface IVisitorShape<R>{
+  R visitCircle(Circle circle);
+  R visitRectangle(Rectangle rect);
+  R visitTriangle(Triangle triangle);
+  R visitSquare(Square square);
+}
+
+// to represent class VisitShapeArea for getting area of the shapes
+class VisitShapeArea implements IVisitorShape<Double>, IFunction<IShape, Double>{
+  public Double apply(IShape shape) {
+    return shape.accept(this);
+  }
+  
+  public Double visitCircle(Circle circle) {
+    return Math.PI * circle.radius * circle.radius;
+  }
+  
+  public Double visitRectangle(Rectangle rect) {
+    return rect.base * rect.height * 1.0;
+  }
+  
+  public Double visitTriangle(Triangle triangle) {
+    return triangle.base * triangle.height * 0.5;
+  }
+  
+  public Double visitSquare(Square square) {
+    return square.size * square.size * 1.0;
   }
 }
 
-class RectangleColor implements IPredicate<Rectangle>{
-  public boolean apply(Rectangle r) {
-    return r.color.equals("maroon");
+//to represent class VisitShapeArea for getting area of the shapes
+class VisitShapeColor implements IVisitorShape<String>, IFunction<IShape, String>{
+  public String apply(IShape shape) {
+   return shape.accept(this);
+  }
+  
+  public String visitCircle(Circle circle) {
+   return circle.color;
+  }
+  
+  public String visitRectangle(Rectangle rect) {
+   return rect.color;
+  }
+  
+  public String visitTriangle(Triangle triangle) {
+   return triangle.color;
+  }
+  
+  public String visitSquare(Square square) {
+   return square.color;
   }
 }
 
-class TriangleColor implements IPredicate<Triangle>{
-  public boolean apply(Triangle t) {
-    return t.color.equals("orange");
+//to represent class VisitShapeArea for getting area of the shapes
+class VisitShapeFind implements IVisitorShape<Boolean>, IPredicate<IShape>{
+  public boolean apply(IShape shape) {
+   return shape.accept(this);
+  }
+  
+  public Boolean visitCircle(Circle circle) {
+   return circle.color.equals("blue");
+  }
+  
+  public Boolean visitRectangle(Rectangle rect) {
+   return rect.color.equals("maroon");
+  }
+  
+  public Boolean visitTriangle(Triangle triangle) {
+   return triangle.color.equals("orange");
+  }
+  
+  public Boolean visitSquare(Square square) {
+   return square.color.equals("magenta");
   }
 }
 
-class SquareColor implements IPredicate<Square>{
-  public boolean apply(Square s) {
-    return s.color.equals("magenta");
-  }
-}
-
-// to represent Area of IShape shapes
-class CircleArea implements IFunction<Circle, Double>{
-  public Double apply(Circle c) {
-    return Math.PI * c.radius * c.radius;
-  }
-}
-
-class RectangleArea implements IFunction<Rectangle, Integer>{
-  public Integer apply(Rectangle r) {
-    return r.base * r.height;
-  }
-}
-
-class TriangleArea implements IFunction<Triangle, Double>{
-  public Double apply(Triangle t) {
-    return t.base * t.height * 0.5;
-  }
-}
-
-class SquareArea implements IFunction<Square, Integer>{
-  public Integer apply(Square s) {
-    return s.size * s.size;
-  }
-}
-
-// classes that represent total areas of the shapes
-class CircleLengths implements IFunction2<Circle, Double, Double>{
-  public Double apply(Circle c, Double initial) {
-    return c.radius + initial;
-  }
-}
-
-class RectangleLengths implements IFunction2<Rectangle, Integer, Integer>{
-  public Integer apply(Rectangle r, Integer initial) {
-    return (r.base + r.height) + initial;
-  }
-}
-
-class TriangleLengths implements IFunction2<Triangle, Double, Double>{
-  public Double apply(Triangle t, Double initial) {
-    return (t.base + t.height) + initial;
-  }
-}
-
-class SquareLengths implements IFunction2<Square, Integer, Integer>{
-  public Integer apply(Square s, Integer initial) {
-    return s.size + initial;
-  }
-}
 
 
