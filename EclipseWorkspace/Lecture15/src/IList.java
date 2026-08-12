@@ -4,6 +4,7 @@ import tester.*;
 interface IList<T>{
     IList<T> find(IPredicate<T> predicate);
     <U> IList<U> map(IFunction<T, U> function);
+    <U> U foldr(IFunction2<T, U, U> function, U initialValue);
 }
 
 // to represent an empty list of IList
@@ -15,6 +16,11 @@ class MtList<T> implements IList<T>{
     public <U> IList<U> map(IFunction<T, U> function){
       return new MtList<U>();
     }
+
+    public <U> U foldr(IFunction2<T, U, U> function, U initialValue){
+        return initialValue;
+    }
+
 }
 
 // to represent ConsList of IList
@@ -39,6 +45,11 @@ class ConsList<T> implements IList<T>{
     public <U> IList<U> map(IFunction<T, U> function){
       return new ConsList<U>(function.apply(this.first), this.rest.map(function));
     }
+
+    public <U> U foldr(IFunction2<T, U, U> function, U initialValue){
+        return function.apply(this.first, this.rest.foldr(function, initialValue));
+    }
+
 }
 
 // to represent class ExamplesIList 
@@ -94,5 +105,11 @@ class ExamplesIList{
       return
       t.checkExpect(this.runnerList.map(new RunnerName()), runnerByName) &&
       t.checkExpect(this.bookList.map(new BookByYear()), bookByYear);
+    }
+
+    boolean testFoldr(Tester t){
+        return 
+        t.checkExpect(this.runnerList.foldr(new TotalRunnersAge(), 0), 194) &&
+        t.checkExpect(this.bookList.foldr(new TotalPriceBook(), 0.0), 90.0);
     }
 }
