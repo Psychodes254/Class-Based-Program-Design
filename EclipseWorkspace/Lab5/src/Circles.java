@@ -105,6 +105,19 @@ class Circle {
   }
 }
 
+class MyWorld extends World{
+  ILoCircle circles;
+  
+  MyWorld(ILoCircle circles){
+    this.circles = circles;
+  }
+  
+  public WorldScene makeScene() {
+    WorldScene scene = new WorldScene(1000, 1000);
+    return this.circles.placeAll(scene);
+  }
+}
+
 class ExamplesCircles{
   ExamplesCircles(){}
   
@@ -128,6 +141,12 @@ class ExamplesCircles{
   ILoCircle OffscreenCircleList = new ConsList(moveCircle4, mt);
   ILoCircle removedCircleList = new ConsList(moveCircle1, new ConsList(moveCircle2, new ConsList(moveCircle3, mt)));
   
+  MyWorld WorldEmpty = new MyWorld(this.mt);
+  MyWorld WorldWithCircles = new MyWorld(circleList);
+  
+  WorldScene expectedEmpty = this.mt.placeAll(new WorldScene(1000, 1000));
+  WorldScene expectedWithCircles = this.circleList.placeAll(new WorldScene(1000, 1000));
+  
   boolean testMoveCircle(Tester t) {    
     return
         t.checkExpect(this.circle1.move(), circle2) &&
@@ -147,12 +166,18 @@ class ExamplesCircles{
         t.checkExpect(this.movedCircleList.removeOffscreen(s), removedCircleList);
   }
   
-  boolean testDrawTree(Tester t) {    
+  boolean testDrawCircle(Tester t) {    
     return c.drawScene(s.placeImageXY(circle1.draw(), 250, 250))  && c.show();
   }
   
   boolean testPlaceAll(Tester t) {
     return c.drawScene(circleList.placeAll(s)) && c.show();
+  }
+  
+  boolean testMakeScene(Tester t){
+    return 
+        t.checkExpect(this.WorldEmpty.makeScene(), expectedEmpty) &&
+        t.checkExpect(this.WorldWithCircles.makeScene(), expectedWithCircles);
   }
 }
 
