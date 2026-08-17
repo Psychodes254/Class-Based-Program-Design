@@ -12,6 +12,10 @@ interface IItem {
   boolean isTea();
   // convert this to Tea (if feasible)
   Tea toTea();
+  // is this Chocolate?
+  boolean isChocolate();
+  // convert this to Chocolate (if feasible)
+  Chocolate toChocolate();
 }
 
 // to represent examples and tests for objects in Item interface
@@ -27,6 +31,10 @@ class ExamplesItems{
   IItem majani = new Tea("Majani", 800);
   IItem ketepa = new Tea("Ketepa", 950);
   IItem fahari = new Tea("Fahari", 790);
+  
+  IItem ruby = new Chocolate("Unsweetened", 5);
+  IItem milk = new Chocolate("Bittersweet", 8);
+  IItem gianduja = new Chocolate("Couverture", 12);
 
   // test the sameness of the coffee method
   boolean testSameCoffee(Tester t){
@@ -51,7 +59,9 @@ class ExamplesItems{
         t.checkExpect(this.ketepa.isCoffee(), false) &&
         t.checkExpect(this.kona.isTea(), false) &&
         t.checkExpect(this.decaf1.isCoffee(), true) &&
-        t.checkExpect(this.decaf2.isTea(), false);
+        t.checkExpect(this.decaf2.isTea(), false) &&
+        t.checkExpect(this.ruby.isCoffee(), false) &&
+        t.checkExpect(this.gianduja.isChocolate(), true);
   }
   
   // test the sameness method of the Tea class
@@ -59,5 +69,12 @@ class ExamplesItems{
     return 
         t.checkExpect(this.majani.same(this.majani), true) &&
         t.checkExpect(this.ketepa.same(fahari), false);
+  }
+  
+  // test the sameness method of the chocolate class
+  boolean testSameChocolate(Tester t) {
+    return
+        t.checkExpect(this.ruby.same(this.gianduja), false) &&
+        t.checkExpect(this.milk.same(this.milk), true);
   }
 }

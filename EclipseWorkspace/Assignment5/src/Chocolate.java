@@ -1,14 +1,15 @@
-class Tea implements IItem {
-  private String kind;
-  private int price;
+// to represent class Chocolate
+class Chocolate implements IItem{
+  String sweetness;
+  int price;
   
-  Tea(String kind, int price) {
-    this.kind = kind;
+  Chocolate(String sweetness, int price){
+    this.sweetness = sweetness;
     this.price = price;
   }
   
   public boolean isTea() {
-    return true;
+    return false;
   }
   
   public boolean isCoffee() {
@@ -16,7 +17,7 @@ class Tea implements IItem {
   }
   
   public Tea toTea() {
-    return this;
+    throw new IllegalArgumentException("not a tea");
   }
   
   public Coffee toCoffee() {
@@ -24,22 +25,22 @@ class Tea implements IItem {
   }
   
   public boolean same(IItem other) {
-    return other.isTea()
-    && other.toTea().same(this);
+    return other.isChocolate()
+    && other.toChocolate().same(this);
   }
   
   // is this the same Tea as other?
-  private boolean same(Tea other) {
+  private boolean same(Chocolate other) {
     return
-    this.kind.equals(other.kind)
+    this.sweetness.equals(other.sweetness)
     && this.price == other.price;
   }
   
   public boolean isChocolate() {
-    return false;
+    return true;
   }
   
   public Chocolate toChocolate() {
-    throw new IllegalArgumentException("not a chocolate!"); 
+    return this; 
   }
 }

@@ -36,6 +36,13 @@ class Coffee implements IItem{
         && this.price == other.price;
       }
 
+      public boolean isChocolate() {
+        return false;
+      }
+      
+      public Chocolate toChocolate() {
+        throw new IllegalArgumentException("not a chocolate!"); 
+      }
 }
 
 class Decaf extends Coffee {
