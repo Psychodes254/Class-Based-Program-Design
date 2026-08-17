@@ -1,48 +1,33 @@
 // represents bulk coffee for sale
-class Coffee implements IItem{
-    private String origin;
-    private int price;
+class Coffee extends AItem{
+    String origin;
 
     public Coffee(String origin, int price) {
-        this.origin = origin;
-        this.price = price;
+      super(price);
+      this.origin = origin;
     }
     
-    public boolean isCoffee() {
-        return true;
-      }
     
-      public boolean isTea() {
-        return false;
-      }
-      
-      public Coffee toCoffee() {
-        return this;
-      }
-      
-      public Tea toTea() {
-        throw new IllegalArgumentException("not a tea");
-      }
-      
-      public boolean same(IItem other) {
-        return (other.isCoffee())
-        && other.toCoffee().same(this);
-      }
-      
-      // is this the same Coffee as other?
-      private boolean same(Coffee other) {
-        return
-        this.origin.equals(other.origin)
-        && this.price == other.price;
-      }
-
-      public boolean isChocolate() {
-        return false;
-      }
-      
-      public Chocolate toChocolate() {
-        throw new IllegalArgumentException("not a chocolate!"); 
-      }
+    public boolean isCoffee() {
+       return true;
+    }
+    
+    @Override
+    public Coffee toCoffee() {
+      return this;
+    }
+    
+    public boolean same(IItem other) {
+      return (other.isCoffee())
+      && other.toCoffee().same(this);
+    }
+    
+    // is this the same Coffee as other?
+    private boolean same(Coffee other) {
+      return
+      this.origin.equals(other.origin)
+      && this.price == other.price;
+    }
 }
 
 class Decaf extends Coffee {
@@ -53,7 +38,16 @@ class Decaf extends Coffee {
         this.quality = quality;
     }
 
-    public boolean same(Decaf other) {
-        return super.same(other) && this.quality == other.quality;
+    @Override
+    public boolean same(IItem other) {
+        return other.isCoffee()
+            && other.toCoffee() instanceof Decaf
+            && this.sameDecaf((Decaf) other.toCoffee());
+    }
+
+    private boolean sameDecaf(Decaf other) {
+        return this.origin.equals(other.origin)
+            && this.price == other.price
+            && this.quality == other.quality;
     }
 }

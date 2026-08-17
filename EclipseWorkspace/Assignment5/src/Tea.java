@@ -1,26 +1,18 @@
-class Tea implements IItem {
+class Tea extends AItem {
   private String kind;
-  private int price;
   
   Tea(String kind, int price) {
+    super(price);
     this.kind = kind;
-    this.price = price;
   }
   
   public boolean isTea() {
     return true;
   }
   
-  public boolean isCoffee() {
-    return false;
-  }
-  
+  @Override
   public Tea toTea() {
     return this;
-  }
-  
-  public Coffee toCoffee() {
-    throw new IllegalArgumentException("not a coffee");
   }
   
   public boolean same(IItem other) {
@@ -33,13 +25,5 @@ class Tea implements IItem {
     return
     this.kind.equals(other.kind)
     && this.price == other.price;
-  }
-  
-  public boolean isChocolate() {
-    return false;
-  }
-  
-  public Chocolate toChocolate() {
-    throw new IllegalArgumentException("not a chocolate!"); 
   }
 }

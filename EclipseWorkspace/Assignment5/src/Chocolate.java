@@ -1,27 +1,10 @@
 // to represent class Chocolate
-class Chocolate implements IItem{
-  String sweetness;
-  int price;
+class Chocolate extends AItem{
+  private String sweetness;
   
   Chocolate(String sweetness, int price){
+    super(price);
     this.sweetness = sweetness;
-    this.price = price;
-  }
-  
-  public boolean isTea() {
-    return false;
-  }
-  
-  public boolean isCoffee() {
-    return false;
-  }
-  
-  public Tea toTea() {
-    throw new IllegalArgumentException("not a tea");
-  }
-  
-  public Coffee toCoffee() {
-    throw new IllegalArgumentException("not a coffee");
   }
   
   public boolean same(IItem other) {
@@ -40,6 +23,7 @@ class Chocolate implements IItem{
     return true;
   }
   
+  @Override
   public Chocolate toChocolate() {
     return this; 
   }

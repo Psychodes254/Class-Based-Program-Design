@@ -18,6 +18,43 @@ interface IItem {
   Chocolate toChocolate();
 }
 
+// to represent abstract class for the Item 
+abstract class AItem implements IItem{
+  int price;
+  
+  AItem(int price){
+    this.price = price;
+  }
+
+  public boolean same(IItem x) {
+    return false;
+  } 
+   
+  public boolean isCoffee() {
+    return false;
+  }
+  
+  public Coffee toCoffee() {
+    throw new IllegalArgumentException("not a valid item!");
+  }
+   
+  public boolean isTea(){
+    return false;
+  }
+   
+  public Tea toTea() {
+    throw new IllegalArgumentException("not a valid item!");
+  }
+   
+  public boolean isChocolate(){
+    return false;
+  }
+   
+  public Chocolate toChocolate() {
+    throw new IllegalArgumentException("not a valid item!");
+  }
+}
+
 // to represent examples and tests for objects in Item interface
 class ExamplesItems{
   ExamplesItems(){}
@@ -25,8 +62,8 @@ class ExamplesItems{
   IItem ethi = new Coffee("Ethiopian",1200);
   IItem kona = new Coffee("Kona",2095);
   IItem ethi1300 = (new Coffee("Ethiopian",1300));
-  Decaf decaf1 = new Decaf("Ethiopian",1200,99);
-  Decaf decaf2 = new Decaf("Ethiopian",1200,98);
+  IItem decaf1 = new Decaf("Ethiopian",1200,99);
+  IItem decaf2 = new Decaf("Ethiopian",1200,98);
   
   IItem majani = new Tea("Majani", 800);
   IItem ketepa = new Tea("Ketepa", 950);
@@ -76,5 +113,44 @@ class ExamplesItems{
     return
         t.checkExpect(this.ruby.same(this.gianduja), false) &&
         t.checkExpect(this.milk.same(this.milk), true);
+  }
+  
+  //test the toCoffee method
+  boolean testToCoffee(Tester t) {
+   return
+       t.checkExpect(this.ethi.toCoffee(), this.ethi) &&
+       t.checkExpect(this.decaf1.toCoffee(), this.decaf1) &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.majani, "toCoffee") &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.ruby, "toCoffee");
+  }
+
+  //test the toTea method
+  boolean testToTea(Tester t) {
+   return
+       t.checkExpect(this.majani.toTea(), this.majani) &&
+       t.checkExpect(this.ketepa.toTea(), this.ketepa) &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.ethi, "toTea") &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.ruby, "toTea");
+  }
+
+  //test the toChocolate method
+  boolean testToChocolate(Tester t) {
+   return
+       t.checkExpect(this.ruby.toChocolate(), this.ruby) &&
+       t.checkExpect(this.milk.toChocolate(), this.milk) &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.ethi, "toChocolate") &&
+       t.checkException(
+           new IllegalArgumentException("not a valid item!"),
+           this.majani, "toChocolate");
   }
 }
