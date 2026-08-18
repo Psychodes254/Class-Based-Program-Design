@@ -1,3 +1,8 @@
+// to represent interface for the predicate
+interface IPred<U> {
+  boolean apply(U r);
+}
+
 // Represents functions of signature A -> R, for some argument type A and
 // result type R
 interface IFunc<A, R> {
@@ -61,5 +66,11 @@ class JSONToNumber implements IVisitorJSON<Integer>, IFunc<JSON, Integer>{
   
   public Integer visitJSONList(JSONList list) {
     return list.values.foldr(new SumJSON(), 0);
+  }
+}
+
+class VisitJSONFind implements IPred<Integer>{
+    public boolean apply(Integer i) {
+    return i > 10;
   }
 }

@@ -72,6 +72,11 @@ class ExamplesJSON{
   JSON number = new JSONNumber(8);
   JSON bool = new JSONBool(true);
   JSON string = new JSONString("home");
+
+  JSON blank2 = new JSONBlank();
+  JSON number2 = new JSONNumber(20);
+  JSON bool2 = new JSONBool(false);
+  JSON string2 = new JSONString("Western");
   
   IList<JSON> jsonValues = 
       new ConsList<JSON>(blank, 
@@ -79,8 +84,17 @@ class ExamplesJSON{
               new ConsList<JSON>(bool, 
                   new ConsList<JSON>(string,  
                       new MtList<JSON>()))));
+
+  IList<JSON> jsonValues2 = 
+      new ConsList<JSON>(blank2, 
+          new ConsList<JSON>(number2, 
+              new ConsList<JSON>(bool2, 
+                  new ConsList<JSON>(string2,  
+                      new MtList<JSON>()))));
   
   JSON jsonList = new JSONList(jsonValues);
+  JSON jsonList2 = new JSONList(jsonValues2);
+
   
   IList<Integer> jsonIntegers = 
       new ConsList<Integer>(0, 
@@ -88,19 +102,32 @@ class ExamplesJSON{
               new ConsList<Integer>(1, 
                   new ConsList<Integer>(4, 
                       new MtList<Integer>()))));
+
+  IList<Integer> jsonIntegers2 = 
+      new ConsList<Integer>(0, 
+          new ConsList<Integer>(20, 
+              new ConsList<Integer>(0, 
+                  new ConsList<Integer>(7, 
+                      new MtList<Integer>()))));
   
   // test JSONToNumber method mapping them to IList
   boolean testJSONToNumber(Tester t) {
     return 
-        t.checkExpect(this.jsonValues.map(new JSONToNumber()), jsonIntegers);
+        t.checkExpect(this.jsonValues.map(new JSONToNumber()), jsonIntegers) &&
+        t.checkExpect(this.jsonValues2.map(new JSONToNumber()), jsonIntegers2);
   }
   
   // test the sum of all integers in the list 
   boolean testSumjSONList(Tester t) {
     return 
-        t.checkExpect(this.jsonList.accept(new JSONToNumber()), 13);
+        t.checkExpect(this.jsonList.accept(new JSONToNumber()), 13) &&
+        t.checkExpect(this.jsonList2.accept(new JSONToNumber()), 27);
+  }
+
+  // test the finder method in a list
+  boolean testFindSolution(Tester t){
+    return
+    t.checkExpect(this.jsonValues.findSolutionOrElse(new JSONToNumber(), new VisitJSONFind(), 0), 0) &&
+    t.checkExpect(this.jsonValues2.findSolutionOrElse(new JSONToNumber(), new VisitJSONFind(), 0), 20);
   }
 }
-
-
-

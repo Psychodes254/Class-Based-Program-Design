@@ -6,6 +6,7 @@ interface IList<T> {
   // element type
   <U> IList<U> map(IFunc<T, U> f);
   <U> U foldr(IFunc2<T, U, U> function, U initialValue);
+  <U> U findSolutionOrElse(IFunc<T, U> convert, IPred<U> pred, U backup);
 }
  
 // empty generic list
@@ -16,6 +17,10 @@ class MtList<T> implements IList<T> {
   
   public <U> U foldr(IFunc2<T, U, U> function, U initialValue) {
     return initialValue;
+  }
+
+  public <U> U findSolutionOrElse(IFunc<T, U> convert, IPred<U> pred, U backup){
+    return backup;
   }
 }
  
@@ -36,6 +41,16 @@ class ConsList<T> implements IList<T> {
   public <U> U foldr(IFunc2<T, U, U> function, U initialValue) {
     return function.apply(this.first, this.rest.foldr(function, initialValue));
   }
+
+  public <U> U findSolutionOrElse(IFunc<T, U> convert, IPred<U> pred, U backup){
+    U converted = convert.apply(this.first);
+    if (pred.apply(converted)){
+      return converted;
+    }
+    else{
+      return this.rest.findSolutionOrElse(convert, pred, backup);
+    }
+  }
 }
 
 // to represent an examples and tests class
@@ -52,6 +67,3 @@ class ExamplesIList{
         t.checkExpect(this.list2.foldr(new SumIntegers(), 0), 600);
   }
 }
-
-
-
