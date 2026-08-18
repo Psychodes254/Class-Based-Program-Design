@@ -22,6 +22,7 @@ interface IVisitorJSON<R>{
   R visitJSONBool(JSONBool bool);
   R visitJSONString(JSONString string);
   R visitJSONList(JSONList list);
+  R visitJSONObject(JSONObject object);
 }
 
 // to represent a class that sums integers
@@ -67,10 +68,20 @@ class JSONToNumber implements IVisitorJSON<Integer>, IFunc<JSON, Integer>{
   public Integer visitJSONList(JSONList list) {
     return list.values.foldr(new SumJSON(), 0);
   }
+
+  public Integer visitJSONObject(JSONObject object){
+    return object.pair.foldr(new SumJSONPairs(), 0);
+  }
 }
 
 class VisitJSONFind implements IPred<Integer>{
     public boolean apply(Integer i) {
     return i > 10;
+  }
+}
+
+class SumJSONPairs implements IFunc2<Pair<String, JSON>, Integer, Integer>{
+  public Integer apply(Pair<String, JSON> pair, Integer sum){
+    return pair.y.accept(new JSONToNumber()) + sum;
   }
 }

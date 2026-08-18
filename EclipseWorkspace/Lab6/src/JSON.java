@@ -64,6 +64,30 @@ class JSONList implements JSON {
   }
 }
 
+// a list of JSON pairs
+class JSONObject implements JSON {
+  IList<Pair<String, JSON>> pair;
+ 
+  JSONObject(IList<Pair<String, JSON>> pair) {
+    this.pair = pair;
+  }
+
+  public <R> R accept(IVisitorJSON<R> visitor){
+    return visitor.visitJSONObject(this);
+  }
+}
+ 
+// generic pairs
+class Pair<X, Y> {
+  X x;
+  Y y;
+ 
+  Pair(X x, Y y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 // to represent examples and tests for the json objects
 class ExamplesJSON{
   ExamplesJSON(){}
@@ -76,7 +100,19 @@ class ExamplesJSON{
   JSON blank2 = new JSONBlank();
   JSON number2 = new JSONNumber(20);
   JSON bool2 = new JSONBool(false);
-  JSON string2 = new JSONString("Western");
+  JSON string2 = new JSONString("Stephen");
+
+  Pair<String, JSON> pair1 = new Pair<String, JSON>("age", number2);
+  Pair<String, JSON> pair2 = new Pair<String, JSON>("name", string2);
+  Pair<String, JSON> pair3 = new Pair<String, JSON>("active", bool);
+
+  IList<Pair<String, JSON>> pairs =  
+    new ConsList<Pair<String, JSON>>(pair1, 
+      new ConsList<Pair<String, JSON>>(pair2, 
+        new ConsList<Pair<String, JSON>>(pair3,   
+          new MtList<Pair<String, JSON>>())));
+
+  JSON object = new JSONObject(pairs);
   
   IList<JSON> jsonValues = 
       new ConsList<JSON>(blank, 
@@ -129,5 +165,10 @@ class ExamplesJSON{
     return
     t.checkExpect(this.jsonValues.findSolutionOrElse(new JSONToNumber(), new VisitJSONFind(), 0), 0) &&
     t.checkExpect(this.jsonValues2.findSolutionOrElse(new JSONToNumber(), new VisitJSONFind(), 0), 20);
+  }
+
+  // test the sum of items in object class
+  boolean testJSONObjectToNumber(Tester t) {
+    return t.checkExpect(this.object.accept(new JSONToNumber()), 28);
   }
 }
