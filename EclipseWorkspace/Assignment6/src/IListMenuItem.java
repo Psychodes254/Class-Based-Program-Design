@@ -1,39 +1,39 @@
 import tester.*;
 
-interface IList {
+interface IListMenuItem {
   // sort this list, according to lessThan
-  IList sort();
+  IListMenuItem sort();
   // insert o into this (sorted) list
-  IList insert(IComp o);
+  IListMenuItem insert(IComp o);
 }
 
 
-class Mt implements IList {
+class Mt implements IListMenuItem {
   Mt() {}
   
-  public IList sort() {
+  public IListMenuItem sort() {
     return this;
   }
   
-  public IList insert(IComp o) {
+  public IListMenuItem insert(IComp o) {
     return new Cons(o,this);
   }
 }
 
-class Cons implements IList {
+class Cons implements IListMenuItem {
   IComp first;
-  IList rest;
+  IListMenuItem rest;
   
-  Cons(IComp first, IList rest) {
+  Cons(IComp first, IListMenuItem rest) {
     this.first = first;
     this.rest = rest;
   }
   
-  public IList sort() {
+  public IListMenuItem sort() {
     return rest.sort().insert(first);
   }
   
-  public IList insert(IComp o) {
+  public IListMenuItem insert(IComp o) {
     if (first.lessThan(o)) {
       return new Cons(first,rest.insert(o)); }
     else {
@@ -41,8 +41,8 @@ class Cons implements IList {
   }
 }
 
-class ExamplesILists{
-  ExamplesILists(){}
+class ExamplesIListMenuItems{
+  ExamplesIListMenuItems(){}
   
   MenuItem item1 = new MenuItem("Knife", 5);
   MenuItem item2 = new MenuItem("Thermos", 2);
@@ -52,12 +52,12 @@ class ExamplesILists{
   PhoneBook contact2 = new PhoneBook("Kevin", 35836142);
   PhoneBook contact3 = new PhoneBook("Prince", 56903671);
   
-  IList mt = new Mt();
-  IList listItems = new Cons(item1, new Cons(item2, new Cons(item3, mt)));
-  IList listPhone = new Cons(contact1, new Cons(contact2, new Cons(contact3, mt)));
+  IListMenuItem mt = new Mt();
+  IListMenuItem listItems = new Cons(item1, new Cons(item2, new Cons(item3, mt)));
+  IListMenuItem listPhone = new Cons(contact1, new Cons(contact2, new Cons(contact3, mt)));
   
-  IList sortedItems = new Cons(item2, new Cons(item3, new Cons(item1, mt)));
-  IList sortedPhone = new Cons(contact2, new Cons(contact3, new Cons(contact1, mt)));
+  IListMenuItem sortedItems = new Cons(item2, new Cons(item3, new Cons(item1, mt)));
+  IListMenuItem sortedPhone = new Cons(contact2, new Cons(contact3, new Cons(contact1, mt)));
   
   // test the sort method
   boolean testSort(Tester t) {

@@ -39,8 +39,8 @@ class PhoneBook extends MenuItem{
   }
 }
 
-class ExamplesComps{
-  ExamplesComps(){}
+class ExamplesMenuComps{
+  ExamplesMenuComps(){}
   
   MenuItem item1 = new MenuItem("Knife", 5);
   MenuItem item2 = new MenuItem("Thermos", 2);
