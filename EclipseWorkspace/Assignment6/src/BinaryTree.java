@@ -9,6 +9,10 @@ abstract class ABST<T>{
   
   abstract ABST<T> insert(T data);
   abstract boolean present(T data);
+  abstract T getLeftmost();
+  abstract T getRighttmost();
+  abstract T getLeftmostHelper(T best);
+  abstract T getRighttmostHelper(T best);
 }
 
 class Leaf<T> extends ABST<T>{
@@ -22,6 +26,22 @@ class Leaf<T> extends ABST<T>{
   
   public boolean present(T data){
     return false;
+  }
+
+  public T getLeftmost(){
+    throw new RuntimeException("No leftmost item of an empty tree");
+  }
+
+  public T getRighttmost(){
+    throw new RuntimeException("No right of an empty tree");
+  }
+
+  public T getLeftmostHelper(T best){
+    return best;
+  }
+
+  public T getRighttmostHelper(T best){
+    return best;
   }
 }
 
@@ -39,10 +59,10 @@ class Node<T> extends ABST<T>{
   
   public ABST<T> insert(T data){
     if (this.order.compare(data, this.data) <= 0){
-      return new Node<T>(this.order, data, this.left.insert(data), this.right);
+      return new Node<T>(this.order, this.data, this.left.insert(data), this.right);
     }
     else {
-      return new Node<T>(this.order, data, this.left, this.right.insert(data));
+      return new Node<T>(this.order, this.data, this.left, this.right.insert(data));
     }
   }
   
@@ -59,6 +79,23 @@ class Node<T> extends ABST<T>{
       return this.right.present(data);
     }
   }
+
+  public T getLeftmost(){
+    return this.left.getLeftmostHelper(this.data);
+  }
+
+  public T getRighttmost(){
+    return this.right.getRighttmostHelper(this.data);
+
+  }
+
+  public T getLeftmostHelper(T best){
+    return this.left.getLeftmostHelper(this.data);
+  }
+
+  public T getRighttmostHelper(T best){
+    return this.right.getRighttmostHelper(this.data);
+  }
 }
 
 class ExamplesBSTs{
@@ -73,7 +110,13 @@ class ExamplesBSTs{
   Comparator<Book> byPrice = new BooksByPrice();
   
   ABST<Book> tree = new Leaf<Book>(byTitle).insert(book1);
-  ABST<Book> wholeTree = tree.insert(book1).insert(book2);
+  ABST<Book> tree2 = new Leaf<Book>(byAuthor).insert(book1);
+  ABST<Book> tree3 = new Leaf<Book>(byPrice).insert(book1);
+  ABST<Book> secondTree = tree.insert(book1).insert(book2);
+  ABST<Book> titleTree = tree.insert(book1).insert(book2).insert(book3);
+  ABST<Book> authorTree = tree2.insert(book1).insert(book2).insert(book3);
+  ABST<Book> priceTree = tree3.insert(book1).insert(book2).insert(book3);
+
   ABST<Book> expected =
       new Node<Book>(byTitle, book1, 
           new Leaf<Book>(byTitle), new Leaf<Book>(byTitle));
@@ -109,8 +152,19 @@ class ExamplesBSTs{
   // test the present method
   boolean testPresent(Tester t) {
     return
-        t.checkExpect(this.wholeTree.present(book1), true) &&
-        t.checkExpect(this.wholeTree.present(book3), false);
+        t.checkExpect(this.secondTree.present(book1), true) &&
+        t.checkExpect(this.secondTree.present(book3), false);
+  }
+
+  // test the Leftmost and Rightmost methods of BST
+  boolean testLeftmostRightmost(Tester t){
+    return 
+    t.checkExpect(this.titleTree.getLeftmost().title, "Cujo") &&
+    t.checkExpect(this.titleTree.getRighttmost().title, "Emma") &&
+    t.checkExpect(this.authorTree.getLeftmost().author, "Austen") &&
+    t.checkExpect(this.authorTree.getRighttmost().author, "King") &&
+    t.checkExpect(this.priceTree.getLeftmost().price, 15) &&
+    t.checkExpect(this.priceTree.getRighttmost().price, 50);
   }
 }
 
