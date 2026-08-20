@@ -14,6 +14,9 @@ abstract class ABST<T>{
   abstract T getLeftmostHelper(T best);
   abstract T getRighttmostHelper(T best);
   abstract boolean sameTree(ABST<T> other);
+  abstract int size();
+  abstract boolean allPresent(ABST<T> other);
+  abstract boolean sameData(ABST<T> other);
 }
 
 class Leaf<T> extends ABST<T>{
@@ -47,6 +50,18 @@ class Leaf<T> extends ABST<T>{
 
   public boolean sameTree(ABST<T> other){
     return other instanceof Leaf<?>;
+  }
+  
+  public int size() {
+    return 0;
+  }
+  
+  public boolean allPresent(ABST<T> other) {
+    return true;
+  }
+  
+  public boolean sameData(ABST<T> other) {
+    return other.size() == 0;
   }
 }
 
@@ -111,6 +126,22 @@ class Node<T> extends ABST<T>{
       (this.order.compare(this.data, otherNode.data) == 0) &&
       this.left.sameTree(otherNode.left) &&
       this.right.sameTree(otherNode.right);
+  }
+  
+  public int size() {
+    return 1 + this.left.size() + this.right.size();
+  }
+  
+  public boolean allPresent(ABST<T> other) {
+    return other.present(this.data) &&
+        this.left.allPresent(other) &&
+        this.right.allPresent(other);
+        
+  }
+  
+  public boolean sameData(ABST<T> other) {
+    return (other.size() == this.size()) &&
+           other.allPresent(this);
   }
 }
 
@@ -188,6 +219,13 @@ class ExamplesBSTs{
     return
     t.checkExpect(this.titleTree.sameTree(titleTree), true) &&
     t.checkExpect(this.authorTree.sameTree(priceTree), false);
+  }
+  
+  // test if the BST have the same data
+  boolean testSameData(Tester t) {
+    return
+        t.checkExpect(this.titleTree.sameData(this.authorTree), true) &&
+        t.checkExpect(this.priceTree.sameData(this.secondTree), false);
   }
 }
 
