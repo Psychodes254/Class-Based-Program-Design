@@ -13,6 +13,7 @@ abstract class ABST<T>{
   abstract T getRighttmost();
   abstract T getLeftmostHelper(T best);
   abstract T getRighttmostHelper(T best);
+  abstract boolean sameTree(ABST<T> other);
 }
 
 class Leaf<T> extends ABST<T>{
@@ -42,6 +43,10 @@ class Leaf<T> extends ABST<T>{
 
   public T getRighttmostHelper(T best){
     return best;
+  }
+
+  public boolean sameTree(ABST<T> other){
+    return other instanceof Leaf<?>;
   }
 }
 
@@ -95,6 +100,17 @@ class Node<T> extends ABST<T>{
 
   public T getRighttmostHelper(T best){
     return this.right.getRighttmostHelper(this.data);
+  }
+
+  public boolean sameTree(ABST<T> other){
+    if (!(other instanceof Node<?>)){
+      return false;
+    }
+    Node<T> otherNode = (Node<T>) other;
+    return
+      (this.order.compare(this.data, otherNode.data) == 0) &&
+      this.left.sameTree(otherNode.left) &&
+      this.right.sameTree(otherNode.right);
   }
 }
 
@@ -166,6 +182,14 @@ class ExamplesBSTs{
     t.checkExpect(this.priceTree.getLeftmost().price, 15) &&
     t.checkExpect(this.priceTree.getRighttmost().price, 50);
   }
+
+  // test the same BST method
+  boolean testSameTree(Tester t){
+    return
+    t.checkExpect(this.titleTree.sameTree(titleTree), true) &&
+    t.checkExpect(this.authorTree.sameTree(priceTree), false);
+  }
 }
+
 
 
