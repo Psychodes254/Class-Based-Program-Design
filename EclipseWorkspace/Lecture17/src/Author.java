@@ -16,4 +16,8 @@ class Author{
                this.last.equals(other.last) &&
                this.yob == other.yob;
     }
+    
+    void updateBook(Book b) {
+      this.book = b;
+    }
 }

@@ -25,12 +25,29 @@ class Book{
 class ExamplesBooks{
     ExamplesBooks(){}
 
-    // test the same book mutation
-    boolean testSameBook(Tester t){
-        Author james = new Author("James", "Clear", 1986, null);
-        Book atomic = new Book("Atomic Habits", 15, 1, james);
-        james.book = atomic;
-        return
-        t.checkExpect(james.book.author, james);
+    Author james;
+    Author jkRowling;
+    Book atomic;
+    Book hp1;
+    
+    void initialConditions() {
+      this.james = new Author("James", "Clear", 1986, null);
+      this.jkRowling = new Author("Jk", "Rowling", 1965, null);
+      this.atomic = new Book("Atomic Habits", 15, 1, james);
+      this.hp1 = new Book("Harry Potter", 15, 1, jkRowling);
     }
+
+    void testSameBook(Tester t){
+      initialConditions();
+      james.updateBook(atomic);
+      t.checkExpect(this.james.book, atomic);
+      t.checkExpect(james.book.author, james);
+    }
+    
+    void testSameBook2(Tester t){
+      initialConditions();
+      jkRowling.updateBook(hp1);
+      t.checkExpect(this.jkRowling.book, hp1);
+      t.checkExpect(jkRowling.book.author, jkRowling);
+  }
 } 
